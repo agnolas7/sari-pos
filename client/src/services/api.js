@@ -13,8 +13,6 @@ export const updateVariant = (id, data) =>
   api.put(`/products/variant/${id}`, data);
 export const deleteVariant = (id) => api.delete(`/products/variant/${id}`);
 export const addVariant = (data) => api.post("/products/variant", data);
-export const getProductByBarcode = (code) =>
-  api.get(`/products/barcode/${code}`);
 
 // Utang endpoints
 export const getUtangs = () => api.get("/utangs");

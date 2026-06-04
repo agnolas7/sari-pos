@@ -25,11 +25,6 @@ const ProductVariant = sequelize.define(
       type: DataTypes.DECIMAL(8, 2), // up to ₱999,999.99
       allowNull: false,
     },
-    barcode: {
-      type: DataTypes.STRING(100),
-      allowNull: true,
-      unique: true,
-    },
     is_active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,

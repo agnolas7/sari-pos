@@ -24,27 +24,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET product variant by barcode
-router.get("/barcode/:code", async (req, res) => {
-  try {
-    const variant = await ProductVariant.findOne({
-      where: { barcode: req.params.code, is_active: true },
-      include: [
-        {
-          model: Product,
-          as: "product",
-          include: [{ model: Category, as: "category" }],
-        },
-      ],
-    });
-    if (!variant)
-      return res.status(404).json({ error: "Product variant not found" });
-    res.json(variant);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // GET single product by id
 router.get("/:id", async (req, res) => {
   try {
@@ -70,6 +49,11 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { name, category_id, variants } = req.body;
+    
+    if (!name || !category_id) {
+      return res.status(400).json({ error: "Product name and category_id are required" });
+    }
+    
     const product = await Product.create({ name, category_id });
     if (variants && variants.length > 0) {
       const variantsWithId = variants.map((v) => ({
@@ -80,7 +64,15 @@ router.post("/", async (req, res) => {
     }
     res.json(product);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    // Better error messages for common issues
+    let message = err.message;
+    if (err.name === "SequelizeUniqueConstraintError") {
+      const field = err.fields ? Object.keys(err.fields)[0] : "field";
+      message = `Duplicate barcode: "${err.errors?.[0]?.value}". Each variant must have a unique barcode or no barcode.`;
+    } else if (err.name === "SequelizeValidationError") {
+      message = err.errors.map((e) => e.message).join("; ");
+    }
+    res.status(500).json({ error: message });
   }
 });
 

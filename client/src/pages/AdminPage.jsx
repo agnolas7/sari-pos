@@ -53,6 +53,9 @@ function AdminPage() {
   // Search products
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Selected products for bulk delete
+  const [selectedProducts, setSelectedProducts] = useState(new Set());
+
   useEffect(() => {
     if (token) {
       loadData();
@@ -113,6 +116,50 @@ function AdminPage() {
 
   const handleRemoveVariant = (index) => {
     setVariants(variants.filter((_, i) => i !== index));
+  };
+
+  const handleSelectProduct = (productId) => {
+    const newSelected = new Set(selectedProducts);
+    if (newSelected.has(productId)) {
+      newSelected.delete(productId);
+    } else {
+      newSelected.add(productId);
+    }
+    setSelectedProducts(newSelected);
+  };
+
+  const handleSelectAll = () => {
+    const filteredProducts = products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.category?.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+    if (selectedProducts.size === filteredProducts.length) {
+      setSelectedProducts(new Set());
+    } else {
+      setSelectedProducts(new Set(filteredProducts.map((p) => p.id)));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedProducts.size === 0) return;
+    if (
+      !window.confirm(
+        `Delete ${selectedProducts.size} selected product(s)? This cannot be undone.`,
+      )
+    )
+      return;
+
+    try {
+      for (const productId of selectedProducts) {
+        await api.delete(`/products/${productId}`);
+      }
+      setSelectedProducts(new Set());
+      loadData();
+      alert(`✅ Deleted ${selectedProducts.size} product(s)`);
+    } catch (err) {
+      alert(`❌ Error deleting products: ${err.message}`);
+    }
   };
 
   const handleAddProduct = async () => {
@@ -632,19 +679,38 @@ function AdminPage() {
             border: "1px solid #e5e7eb",
           }}
         >
-          <h2 style={{ fontWeight: 700, marginBottom: 12 }}>
-            Products (
-            {
-              products.filter(
-                (p) =>
-                  p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  p.category?.name
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase()),
-              ).length
-            }
-            )
-          </h2>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <h2 style={{ fontWeight: 700, margin: 0 }}>
+              Products (
+              {
+                products.filter(
+                  (p) =>
+                    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    p.category?.name
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase()),
+                ).length
+              }
+              )
+            </h2>
+            {selectedProducts.size > 0 && (
+              <button
+                onClick={handleBulkDelete}
+                style={{
+                  background: "#ef4444",
+                  color: "white",
+                  border: "none",
+                  borderRadius: 8,
+                  padding: "6px 12px",
+                  fontWeight: 600,
+                  fontSize: 13,
+                  cursor: "pointer",
+                }}
+              >
+                🗑️ Delete ({selectedProducts.size})
+              </button>
+            )}
+          </div>
 
           <input
             type="text"
@@ -660,6 +726,35 @@ function AdminPage() {
               marginBottom: 12,
             }}
           />
+
+          <div style={{ display: "flex", alignItems: "center", marginBottom: 12 }}>
+            <input
+              type="checkbox"
+              checked={
+                selectedProducts.size > 0 &&
+                selectedProducts.size ===
+                  products.filter(
+                    (p) =>
+                      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      p.category?.name
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()),
+                  ).length &&
+                products.filter(
+                  (p) =>
+                    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    p.category?.name
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase()),
+                ).length > 0
+              }
+              onChange={handleSelectAll}
+              style={{ marginRight: 8, cursor: "pointer" }}
+            />
+            <label style={{ fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+              Select All Visible
+            </label>
+          </div>
 
           {products
             .filter(
@@ -678,9 +773,23 @@ function AdminPage() {
                   alignItems: "center",
                   padding: "10px 0",
                   borderBottom: "1px solid #f3f4f6",
+                  background: selectedProducts.has(p.id) ? "#fef3c7" : "transparent",
+                  paddingLeft: 8,
+                  borderRadius: 4,
                 }}
               >
-                <div>
+                <input
+                  type="checkbox"
+                  checked={selectedProducts.has(p.id)}
+                  onChange={() => handleSelectProduct(p.id)}
+                  style={{
+                    marginRight: 12,
+                    cursor: "pointer",
+                    width: 16,
+                    height: 16,
+                  }}
+                />
+                <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 600 }}>{p.name}</div>
                   <div style={{ fontSize: 13, color: "#888" }}>
                     {p.category?.name}
@@ -703,6 +812,7 @@ function AdminPage() {
                     padding: "6px 12px",
                     fontWeight: 600,
                     fontSize: 13,
+                    marginLeft: 8,
                   }}
                 >
                   Edit

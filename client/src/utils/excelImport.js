@@ -27,7 +27,6 @@ export const importProductsFromExcel = async (file) => {
           const flavor = row["Flavor"]?.toString().trim();
           const size = row["Size"]?.toString().trim();
           const price = parseFloat(row["Price"]);
-          const barcode = row["Barcode"]?.toString().trim();
 
           if (!productName || !category || isNaN(price)) {
             throw new Error(
@@ -50,7 +49,6 @@ export const importProductsFromExcel = async (file) => {
             flavor: flavor || null,
             size: size || null,
             price,
-            barcode: barcode || null,
           });
         });
 
@@ -128,7 +126,6 @@ export const downloadExcelTemplate = () => {
       Flavor: "Regular",
       Size: "",
       Price: 15,
-      Barcode: "12345678",
     },
     {
       "Product Name": "Lays Chips",
@@ -137,7 +134,6 @@ export const downloadExcelTemplate = () => {
       Flavor: "Regular",
       Size: "Large",
       Price: 25,
-      Barcode: "12345679",
     },
     {
       "Product Name": "Coca Cola",
@@ -146,7 +142,6 @@ export const downloadExcelTemplate = () => {
       Flavor: "",
       Size: "250ml",
       Price: 35,
-      Barcode: "87654321",
     },
   ];
 
@@ -162,7 +157,6 @@ export const downloadExcelTemplate = () => {
     { wch: 15 },
     { wch: 15 },
     { wch: 10 },
-    { wch: 15 },
   ];
 
   XLSX.writeFile(workbook, "sari-pos-products-template.xlsx");

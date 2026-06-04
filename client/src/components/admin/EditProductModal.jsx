@@ -233,21 +233,6 @@ function EditProductModal({ product, categories, onClose, onSave }) {
                   }}
                 />
               </div>
-              <input
-                placeholder="Barcode (optional)"
-                value={v.barcode || ""}
-                onChange={(e) =>
-                  handleVariantChange(i, "barcode", e.target.value)
-                }
-                style={{
-                  width: "100%",
-                  padding: "6px 8px",
-                  borderRadius: 6,
-                  border: "1px solid #ddd",
-                  fontSize: 13,
-                  marginBottom: 6,
-                }}
-              />
               <div style={{ display: "flex", gap: 6 }}>
                 <button
                   onClick={() => handleSaveVariant(v)}
@@ -333,21 +318,6 @@ function EditProductModal({ product, categories, onClose, onSave }) {
                 }}
               />
             </div>
-            <input
-              placeholder="Barcode (optional)"
-              value={newVariant.barcode || ""}
-              onChange={(e) =>
-                setNewVariant({ ...newVariant, barcode: e.target.value })
-              }
-              style={{
-                width: "100%",
-                padding: "6px 8px",
-                borderRadius: 6,
-                border: "1px solid #ddd",
-                fontSize: 13,
-                marginBottom: 6,
-              }}
-            />
             <button
               onClick={handleAddVariant}
               style={{

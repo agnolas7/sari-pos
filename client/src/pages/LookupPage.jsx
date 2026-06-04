@@ -1,13 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  getCategories,
-  getProducts,
-  getProductByBarcode,
-} from "../services/api";
+import { getCategories, getProducts } from "../services/api";
 import useCartStore from "../store/cartStore";
 import VariantPicker from "../components/pos/VariantPicker";
-import BarcodeScanner from "../components/pos/BarcodeScanner";
 import Navbar from "../components/shared/Navbar";
 
 function LookupPage() {
@@ -17,7 +12,6 @@ function LookupPage() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [search, setSearch] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [showScanner, setShowScanner] = useState(false);
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1000,
   );
@@ -41,23 +35,6 @@ function LookupPage() {
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
     return matchesCategory && matchesSearch;
   });
-
-  const handleBarcodeScan = useCallback(
-    async (code) => {
-      setShowScanner(false);
-      try {
-        const res = await getProductByBarcode(code);
-        const variant = res.data;
-        addItem(variant, variant.product.name);
-        alert(
-          `✅ Added: ${variant.product.name} ${variant.flavor || ""} ${variant.size || ""} — ₱${variant.price}`,
-        );
-      } catch {
-        alert("❌ Product not found. Try searching manually.");
-      }
-    },
-    [addItem],
-  );
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
@@ -99,7 +76,7 @@ function LookupPage() {
           </button>
         </div>
 
-        {/* Search + Scan */}
+        {/* Search */}
         <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
           <input
             type="text"
@@ -114,19 +91,6 @@ function LookupPage() {
               fontSize: 16,
             }}
           />
-          <button
-            onClick={() => setShowScanner(true)}
-            style={{
-              padding: "10px 14px",
-              background: "#f97316",
-              color: "white",
-              border: "none",
-              borderRadius: 8,
-              fontSize: 20,
-            }}
-          >
-            📷
-          </button>
         </div>
 
         {/* Categories */}
@@ -236,13 +200,7 @@ function LookupPage() {
           />
         )}
 
-        {/* Barcode Scanner Modal */}
-        {showScanner && (
-          <BarcodeScanner
-            onScan={handleBarcodeScan}
-            onClose={() => setShowScanner(false)}
-          />
-        )}
+
       </div>
     </div>
   );
