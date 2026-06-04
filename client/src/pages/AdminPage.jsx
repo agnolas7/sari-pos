@@ -50,6 +50,9 @@ function AdminPage() {
     { flavor: "", size: "", price: "" },
   ]);
 
+  // Search products
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     if (token) {
       loadData();
@@ -266,6 +269,151 @@ function AdminPage() {
           </button>
         </div>
 
+        {/* Add Product - MOVED TO TOP */}
+        <div
+          style={{
+            background: "white",
+            borderRadius: 12,
+            padding: 16,
+            marginBottom: 16,
+            border: "1px solid #e5e7eb",
+          }}
+        >
+          <h2 style={{ fontWeight: 700, marginBottom: 12 }}>Add Product</h2>
+
+          <input
+            placeholder="Product name"
+            value={prodName}
+            onChange={(e) => setProdName(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              fontSize: 15,
+              marginBottom: 8,
+            }}
+          />
+
+          <select
+            value={prodCategoryId}
+            onChange={(e) => setProdCategoryId(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              fontSize: 15,
+              marginBottom: 12,
+            }}
+          >
+            <option value="">Select category</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.icon} {cat.name}
+              </option>
+            ))}
+          </select>
+
+          {/* Variants */}
+          <div style={{ marginBottom: 8 }}>
+            <div style={{ fontWeight: 600, marginBottom: 8 }}>
+              Variants (size, flavor, price)
+            </div>
+            {variants.map((v, i) => (
+              <div key={i} style={{ display: "flex", gap: 6, marginBottom: 6 }}>
+                <input
+                  placeholder="Flavor"
+                  value={v.flavor}
+                  onChange={(e) =>
+                    handleVariantChange(i, "flavor", e.target.value)
+                  }
+                  style={{
+                    flex: 1,
+                    padding: "8px",
+                    borderRadius: 8,
+                    border: "1px solid #ddd",
+                    fontSize: 14,
+                  }}
+                />
+                <input
+                  placeholder="Size"
+                  value={v.size}
+                  onChange={(e) =>
+                    handleVariantChange(i, "size", e.target.value)
+                  }
+                  style={{
+                    flex: 1,
+                    padding: "8px",
+                    borderRadius: 8,
+                    border: "1px solid #ddd",
+                    fontSize: 14,
+                  }}
+                />
+                <input
+                  placeholder="₱ Price"
+                  type="number"
+                  value={v.price}
+                  onChange={(e) =>
+                    handleVariantChange(i, "price", e.target.value)
+                  }
+                  style={{
+                    width: 80,
+                    padding: "8px",
+                    borderRadius: 8,
+                    border: "1px solid #ddd",
+                    fontSize: 14,
+                  }}
+                />
+                {variants.length > 1 && (
+                  <button
+                    onClick={() => handleRemoveVariant(i)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#ef4444",
+                      fontSize: 18,
+                    }}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              onClick={handleAddVariant}
+              style={{
+                background: "none",
+                border: "1px dashed #ddd",
+                borderRadius: 8,
+                padding: "6px 12px",
+                color: "#888",
+                width: "100%",
+                marginTop: 4,
+              }}
+            >
+              + Add another variant
+            </button>
+          </div>
+
+          <button
+            onClick={handleAddProduct}
+            style={{
+              width: "100%",
+              padding: 12,
+              background: "#f97316",
+              color: "white",
+              border: "none",
+              borderRadius: 8,
+              fontWeight: 700,
+              fontSize: 16,
+              marginTop: 8,
+            }}
+          >
+            Save Product
+          </button>
+        </div>
+
         {/* Add Category */}
         <div
           style={{
@@ -475,152 +623,7 @@ function AdminPage() {
           )}
         </div>
 
-        {/* Add Product */}
-        <div
-          style={{
-            background: "white",
-            borderRadius: 12,
-            padding: 16,
-            marginBottom: 16,
-            border: "1px solid #e5e7eb",
-          }}
-        >
-          <h2 style={{ fontWeight: 700, marginBottom: 12 }}>Add Product</h2>
-
-          <input
-            placeholder="Product name (e.g. Pancit Canton)"
-            value={prodName}
-            onChange={(e) => setProdName(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "8px 12px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              fontSize: 15,
-              marginBottom: 8,
-            }}
-          />
-
-          <select
-            value={prodCategoryId}
-            onChange={(e) => setProdCategoryId(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "8px 12px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              fontSize: 15,
-              marginBottom: 12,
-            }}
-          >
-            <option value="">Select category</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.icon} {cat.name}
-              </option>
-            ))}
-          </select>
-
-          {/* Variants */}
-          <div style={{ marginBottom: 8 }}>
-            <div style={{ fontWeight: 600, marginBottom: 8 }}>
-              Variants (size, flavor, price)
-            </div>
-            {variants.map((v, i) => (
-              <div key={i} style={{ display: "flex", gap: 6, marginBottom: 6 }}>
-                <input
-                  placeholder="Flavor"
-                  value={v.flavor}
-                  onChange={(e) =>
-                    handleVariantChange(i, "flavor", e.target.value)
-                  }
-                  style={{
-                    flex: 1,
-                    padding: "8px",
-                    borderRadius: 8,
-                    border: "1px solid #ddd",
-                    fontSize: 14,
-                  }}
-                />
-                <input
-                  placeholder="Size"
-                  value={v.size}
-                  onChange={(e) =>
-                    handleVariantChange(i, "size", e.target.value)
-                  }
-                  style={{
-                    flex: 1,
-                    padding: "8px",
-                    borderRadius: 8,
-                    border: "1px solid #ddd",
-                    fontSize: 14,
-                  }}
-                />
-                <input
-                  placeholder="₱ Price"
-                  type="number"
-                  value={v.price}
-                  onChange={(e) =>
-                    handleVariantChange(i, "price", e.target.value)
-                  }
-                  style={{
-                    width: 80,
-                    padding: "8px",
-                    borderRadius: 8,
-                    border: "1px solid #ddd",
-                    fontSize: 14,
-                  }}
-                />
-                {variants.length > 1 && (
-                  <button
-                    onClick={() => handleRemoveVariant(i)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "#ef4444",
-                      fontSize: 18,
-                    }}
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              onClick={handleAddVariant}
-              style={{
-                background: "none",
-                border: "1px dashed #ddd",
-                borderRadius: 8,
-                padding: "6px 12px",
-                color: "#888",
-                width: "100%",
-                marginTop: 4,
-              }}
-            >
-              + Add another variant
-            </button>
-          </div>
-
-          <button
-            onClick={handleAddProduct}
-            style={{
-              width: "100%",
-              padding: 12,
-              background: "#f97316",
-              color: "white",
-              border: "none",
-              borderRadius: 8,
-              fontWeight: 700,
-              fontSize: 16,
-              marginTop: 8,
-            }}
-          >
-            Save Product
-          </button>
-        </div>
-
-        {/* Product list */}
+        {/* Product list with Search */}
         <div
           style={{
             background: "white",
@@ -630,48 +633,82 @@ function AdminPage() {
           }}
         >
           <h2 style={{ fontWeight: 700, marginBottom: 12 }}>
-            Products ({products.length})
+            Products (
+            {
+              products.filter(
+                (p) =>
+                  p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  p.category?.name
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()),
+              ).length
+            }
+            )
           </h2>
-          {products.map((p) => (
-            <div
-              key={p.id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "10px 0",
-                borderBottom: "1px solid #f3f4f6",
-              }}
-            >
-              <div>
-                <div style={{ fontWeight: 600 }}>{p.name}</div>
-                <div style={{ fontSize: 13, color: "#888" }}>
-                  {p.category?.name}
-                </div>
-                <div style={{ fontSize: 13, color: "#f97316", marginTop: 2 }}>
-                  {p.variants
-                    ?.map(
-                      (v) =>
-                        `${[v.flavor, v.size].filter(Boolean).join(" ")} ₱${v.price}`,
-                    )
-                    .join(" · ")}
-                </div>
-              </div>
-              <button
-                onClick={() => setEditingProduct(p)}
+
+          <input
+            type="text"
+            placeholder="🔍 Search products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              fontSize: 14,
+              marginBottom: 12,
+            }}
+          />
+
+          {products
+            .filter(
+              (p) =>
+                p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                p.category?.name
+                  .toLowerCase()
+                  .includes(searchQuery.toLowerCase()),
+            )
+            .map((p) => (
+              <div
+                key={p.id}
                 style={{
-                  background: "#f3f4f6",
-                  border: "none",
-                  borderRadius: 8,
-                  padding: "6px 12px",
-                  fontWeight: 600,
-                  fontSize: 13,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "10px 0",
+                  borderBottom: "1px solid #f3f4f6",
                 }}
               >
-                Edit
-              </button>
-            </div>
-          ))}
+                <div>
+                  <div style={{ fontWeight: 600 }}>{p.name}</div>
+                  <div style={{ fontSize: 13, color: "#888" }}>
+                    {p.category?.name}
+                  </div>
+                  <div style={{ fontSize: 13, color: "#f97316", marginTop: 2 }}>
+                    {p.variants
+                      ?.map(
+                        (v) =>
+                          `${[v.flavor, v.size].filter(Boolean).join(" ")} ₱${v.price}`,
+                      )
+                      .join(" · ")}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setEditingProduct(p)}
+                  style={{
+                    background: "#f3f4f6",
+                    border: "none",
+                    borderRadius: 8,
+                    padding: "6px 12px",
+                    fontWeight: 600,
+                    fontSize: 13,
+                  }}
+                >
+                  Edit
+                </button>
+              </div>
+            ))}
         </div>
 
         {/* Edit modal */}
