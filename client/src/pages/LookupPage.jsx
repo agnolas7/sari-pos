@@ -18,11 +18,20 @@ function LookupPage() {
   const [search, setSearch] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showScanner, setShowScanner] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1000,
+  );
   const { items, addItem } = useCartStore();
 
   useEffect(() => {
     getCategories().then((res) => setCategories(res.data));
     getProducts().then((res) => setProducts(res.data));
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const filtered = products.filter((p) => {
@@ -51,173 +60,190 @@ function LookupPage() {
   );
 
   return (
-    <div style={{ maxWidth: 600, margin: "0 auto", padding: 16 }}>
+    <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
       <Navbar />
 
-      {/* Header */}
       <div
         style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 16,
+          maxWidth: 1200,
+          margin: "0 auto",
+          padding: windowWidth < 640 ? "12px" : "24px",
         }}
       >
-        <h1 style={{ fontSize: 20, fontWeight: 700 }}>🏪 Sari-Sari Store</h1>
-        <button
-          onClick={() => navigate("/cart")}
+        {/* Header */}
+        <div
           style={{
-            background: "#f97316",
-            color: "white",
-            border: "none",
-            borderRadius: 8,
-            padding: "8px 16px",
-            fontWeight: 600,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 16,
           }}
         >
-          🛒 Cart ({items.length})
-        </button>
-      </div>
-
-      {/* Search + Scan */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            flex: 1,
-            padding: "10px 14px",
-            borderRadius: 8,
-            border: "1px solid #ddd",
-            fontSize: 16,
-          }}
-        />
-        <button
-          onClick={() => setShowScanner(true)}
-          style={{
-            padding: "10px 14px",
-            background: "#f97316",
-            color: "white",
-            border: "none",
-            borderRadius: 8,
-            fontSize: 20,
-          }}
-        >
-          📷
-        </button>
-      </div>
-
-      {/* Categories */}
-      <div
-        style={{
-          display: "flex",
-          gap: 8,
-          overflowX: "auto",
-          paddingBottom: 8,
-          marginBottom: 12,
-        }}
-      >
-        <button
-          onClick={() => setSelectedCategory(null)}
-          style={{
-            padding: "6px 14px",
-            borderRadius: 20,
-            border: "none",
-            whiteSpace: "nowrap",
-            background: selectedCategory === null ? "#f97316" : "#e5e7eb",
-            color: selectedCategory === null ? "white" : "#333",
-            fontWeight: 600,
-          }}
-        >
-          All
-        </button>
-        {categories.map((cat) => (
+          <h1
+            style={{ fontSize: windowWidth < 640 ? 18 : 24, fontWeight: 700 }}
+          >
+            🏪 Sari-Sari Store
+          </h1>
           <button
-            key={cat.id}
-            onClick={() => setSelectedCategory(cat.id)}
+            onClick={() => navigate("/cart")}
+            style={{
+              background: "#f97316",
+              color: "white",
+              border: "none",
+              borderRadius: 8,
+              padding: "8px 16px",
+              fontWeight: 600,
+            }}
+          >
+            🛒 Cart ({items.length})
+          </button>
+        </div>
+
+        {/* Search + Scan */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{
+              flex: 1,
+              padding: "10px 14px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              fontSize: 16,
+            }}
+          />
+          <button
+            onClick={() => setShowScanner(true)}
+            style={{
+              padding: "10px 14px",
+              background: "#f97316",
+              color: "white",
+              border: "none",
+              borderRadius: 8,
+              fontSize: 20,
+            }}
+          >
+            📷
+          </button>
+        </div>
+
+        {/* Categories */}
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            overflowX: "auto",
+            paddingBottom: 8,
+            marginBottom: 12,
+          }}
+        >
+          <button
+            onClick={() => setSelectedCategory(null)}
             style={{
               padding: "6px 14px",
               borderRadius: 20,
               border: "none",
               whiteSpace: "nowrap",
-              background: selectedCategory === cat.id ? "#f97316" : "#e5e7eb",
-              color: selectedCategory === cat.id ? "white" : "#333",
+              background: selectedCategory === null ? "#f97316" : "#e5e7eb",
+              color: selectedCategory === null ? "white" : "#333",
               fontWeight: 600,
             }}
           >
-            {cat.icon} {cat.name}
+            All
           </button>
-        ))}
-      </div>
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              style={{
+                padding: "6px 14px",
+                borderRadius: 20,
+                border: "none",
+                whiteSpace: "nowrap",
+                background: selectedCategory === cat.id ? "#f97316" : "#e5e7eb",
+                color: selectedCategory === cat.id ? "white" : "#333",
+                fontWeight: 600,
+              }}
+            >
+              {cat.icon} {cat.name}
+            </button>
+          ))}
+        </div>
 
-      {/* Products Grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          gap: 10,
-        }}
-      >
-        {filtered.length === 0 && (
-          <p
-            style={{
-              color: "#999",
-              gridColumn: "span 2",
-              textAlign: "center",
-              marginTop: 32,
-            }}
-          >
-            No products found.
-          </p>
-        )}
-        {filtered.map((product) => (
-          <button
-            key={product.id}
-            onClick={() => setSelectedProduct(product)}
-            style={{
-              background: "white",
-              border: "1px solid #e5e7eb",
-              borderRadius: 10,
-              padding: 14,
-              textAlign: "left",
-              cursor: "pointer",
-            }}
-          >
-            <div style={{ fontWeight: 600, marginBottom: 4 }}>
-              {product.name}
-            </div>
-            <div style={{ fontSize: 13, color: "#888" }}>
-              {product.category?.name}
-            </div>
-            <div style={{ fontSize: 13, color: "#f97316", marginTop: 4 }}>
-              {product.variants?.length} variant
-              {product.variants?.length !== 1 ? "s" : ""}
-            </div>
-          </button>
-        ))}
-      </div>
-
-      {/* Variant Picker Modal */}
-      {selectedProduct && (
-        <VariantPicker
-          product={selectedProduct}
-          onAdd={(variant) => {
-            addItem(variant, selectedProduct.name);
-            setSelectedProduct(null);
+        {/* Products Grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              windowWidth < 640
+                ? "1fr"
+                : windowWidth < 1024
+                  ? "repeat(2, 1fr)"
+                  : "repeat(3, 1fr)",
+            gap: 10,
           }}
-          onClose={() => setSelectedProduct(null)}
-        />
-      )}
+        >
+          {filtered.length === 0 && (
+            <p
+              style={{
+                color: "#999",
+                gridColumn: "span 1",
+                textAlign: "center",
+                marginTop: 32,
+              }}
+            >
+              No products found.
+            </p>
+          )}
+          {filtered.map((product) => (
+            <button
+              key={product.id}
+              onClick={() => setSelectedProduct(product)}
+              style={{
+                background: "white",
+                border: "1px solid #e5e7eb",
+                borderRadius: 10,
+                padding: 14,
+                textAlign: "left",
+                cursor: "pointer",
+              }}
+            >
+              <div style={{ fontWeight: 600, marginBottom: 4 }}>
+                {product.name}
+              </div>
+              <div style={{ fontSize: 13, color: "#888" }}>
+                {product.category?.name}
+              </div>
+              <div style={{ fontSize: 13, color: "#f97316", marginTop: 4 }}>
+                {product.variants?.length} variant
+                {product.variants?.length !== 1 ? "s" : ""}
+              </div>
+            </button>
+          ))}
+        </div>
 
-      {/* Barcode Scanner Modal */}
-      {showScanner && (
-        <BarcodeScanner
-          onScan={handleBarcodeScan}
-          onClose={() => setShowScanner(false)}
-        />
-      )}
+        {/* Variant Picker Modal */}
+        {selectedProduct && (
+          <VariantPicker
+            product={selectedProduct}
+            onAdd={(variant) => {
+              addItem(variant, selectedProduct.name);
+              setSelectedProduct(null);
+            }}
+            onClose={() => setSelectedProduct(null)}
+          />
+        )}
+
+        {/* Barcode Scanner Modal */}
+        {showScanner && (
+          <BarcodeScanner
+            onScan={handleBarcodeScan}
+            onClose={() => setShowScanner(false)}
+          />
+        )}
+      </div>
     </div>
   );
 }

@@ -11,6 +11,9 @@ function AdminPage() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1000,
+  );
 
   // New category form
   const [catName, setCatName] = useState("");
@@ -28,6 +31,12 @@ function AdminPage() {
       loadData();
     }
   }, [token]);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const loadData = () => {
     getCategories().then((res) => setCategories(res.data));
@@ -96,14 +105,14 @@ function AdminPage() {
       <div
         style={{
           maxWidth: 320,
-          margin: "80px auto",
+          margin: windowWidth < 640 ? "60px auto" : "80px auto",
           padding: 24,
           background: "white",
           borderRadius: 16,
           boxShadow: "0 2px 16px rgba(0,0,0,0.1)",
         }}
       >
-        <h2 style={{ textAlign: "center", marginBottom: 24, fontSize: 22 }}>
+        <h2 style={{ textAlign: "center", marginBottom: 24, fontSize: windowWidth < 640 ? 18 : 22 }}>
           🔐 Admin Login
         </h2>
         <input
@@ -148,9 +157,9 @@ function AdminPage() {
   }
 
   return (
-    <div style={{ maxWidth: 600, margin: "0 auto", padding: 16 }}>
+    <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
       <Navbar />
-
+      <div style={{ maxWidth: 1000, margin: "0 auto", padding: windowWidth < 640 ? "12px" : "24px" }}>
       {/* Header */}
       <div
         style={{
@@ -160,7 +169,7 @@ function AdminPage() {
           marginBottom: 24,
         }}
       >
-        <h1 style={{ fontSize: 20, fontWeight: 700 }}>⚙️ Admin Panel</h1>
+        <h1 style={{ fontSize: windowWidth < 640 ? 18 : 22, fontWeight: 700 }}>⚙️ Admin Panel</h1>
         <button
           onClick={() => {
             localStorage.removeItem("admin_token");
@@ -461,6 +470,8 @@ function AdminPage() {
           }}
         />
       )}
+      </div>
+      </div>
     </div>
   );
 }

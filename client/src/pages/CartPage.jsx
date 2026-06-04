@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useCartStore from "../store/cartStore";
 import Navbar from "../components/shared/Navbar";
@@ -8,13 +8,23 @@ function CartPage() {
   const { items, removeItem, updateQuantity, clearCart, getTotal } =
     useCartStore();
   const [amountPaid, setAmountPaid] = useState("");
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1000,
+  );
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const total = getTotal();
   const change = parseFloat(amountPaid) - total;
 
   return (
-    <div style={{ maxWidth: 600, margin: "0 auto", padding: 16 }}>
+    <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
       <Navbar />
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: windowWidth < 640 ? "12px" : "24px" }}>
 
       {/* Header */}
       <div
@@ -31,12 +41,12 @@ function CartPage() {
         >
           ←
         </button>
-        <h1 style={{ fontSize: 20, fontWeight: 700 }}>🛒 Cart</h1>
+        <h1 style={{ fontSize: windowWidth < 640 ? 18 : 24, fontWeight: 700 }}>🛒 Cart</h1>
       </div>
 
       {/* Empty state */}
       {items.length === 0 && (
-        <p style={{ textAlign: "center", color: "#999", marginTop: 60 }}>
+        <p style={{ textAlign: "center", color: "#999", marginTop: windowWidth < 640 ? 40 : 60 }}>
           Cart is empty. Go add some products!
         </p>
       )}
@@ -220,6 +230,8 @@ function CartPage() {
           </button>
         </div>
       )}
+      </div>
+      </div>
     </div>
   );
 }
