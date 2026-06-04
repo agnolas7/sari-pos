@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const { sequelize } = require("./models");
+const seedCategories = require("./seeds/categories");
 
 const app = express();
 
@@ -32,6 +33,9 @@ const PORT = process.env.PORT || 5000;
 sequelize
   .sync({ alter: true })
   .then(() => {
+    // Seed default categories
+    seedCategories();
+
     app.listen(PORT, () => {
       console.log(`✅ Server running on http://localhost:${PORT}`);
       console.log(`✅ Database synced`);
