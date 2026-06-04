@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getCategories, getProducts, adminLogin } from "../services/api";
 import api from "../services/api";
 import EditProductModal from "../components/admin/EditProductModal";
+import Navbar from "../components/shared/Navbar";
 
 function AdminPage() {
   const [pin, setPin] = useState("");
@@ -148,6 +149,8 @@ function AdminPage() {
 
   return (
     <div style={{ maxWidth: 600, margin: "0 auto", padding: 16 }}>
+      <Navbar />
+
       {/* Header */}
       <div
         style={{

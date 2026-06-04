@@ -15,4 +15,14 @@ export const deleteVariant = (id) => api.delete(`/products/variant/${id}`);
 export const addVariant = (data) => api.post("/products/variant", data);
 export const getProductByBarcode = (code) =>
   api.get(`/products/barcode/${code}`);
+
+// Utang endpoints
+export const getUtangs = () => api.get("/utangs");
+export const getUtang = (id) => api.get(`/utangs/${id}`);
+export const addUtang = (data) => api.post("/utangs", data);
+export const payUtang = (id, amount) =>
+  api.put(`/utangs/${id}/pay`, { amount });
+export const updateUtang = (id, data) => api.put(`/utangs/${id}`, data);
+export const deleteUtang = (id) => api.delete(`/utangs/${id}`);
+
 export default api;

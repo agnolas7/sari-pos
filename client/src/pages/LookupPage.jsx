@@ -8,6 +8,7 @@ import {
 import useCartStore from "../store/cartStore";
 import VariantPicker from "../components/pos/VariantPicker";
 import BarcodeScanner from "../components/pos/BarcodeScanner";
+import Navbar from "../components/shared/Navbar";
 
 function LookupPage() {
   const navigate = useNavigate();
@@ -51,6 +52,8 @@ function LookupPage() {
 
   return (
     <div style={{ maxWidth: 600, margin: "0 auto", padding: 16 }}>
+      <Navbar />
+
       {/* Header */}
       <div
         style={{

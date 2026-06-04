@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useCartStore from "../store/cartStore";
+import Navbar from "../components/shared/Navbar";
 
 function CartPage() {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ function CartPage() {
 
   return (
     <div style={{ maxWidth: 600, margin: "0 auto", padding: 16 }}>
+      <Navbar />
+
       {/* Header */}
       <div
         style={{

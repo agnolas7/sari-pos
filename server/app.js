@@ -12,6 +12,16 @@ app.use(express.json());
 app.use("/api/categories", require("./routes/categories"));
 app.use("/api/products", require("./routes/products"));
 app.use("/api/admin", require("./routes/admin"));
+app.use("/api/utangs", require("./routes/utangs"));
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "🏪 Sari-POS API Server",
+    status: "running",
+    apiUrl: "http://localhost:5000/api",
+    clientUrl: "http://localhost:5173",
+  });
+});
 
 app.get("/api", (req, res) => {
   res.json({ message: "Sari-POS API is running 🏪" });
