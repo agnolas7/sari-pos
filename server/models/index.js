@@ -4,6 +4,7 @@ const Product = require("./Product");
 const ProductVariant = require("./ProductVariant");
 const AdminLog = require("./AdminLog");
 const Utang = require("./Utang");
+const StoreSettings = require("./StoreSettings");
 
 Category.hasMany(Product, { foreignKey: "category_id", as: "products" });
 Product.belongsTo(Category, { foreignKey: "category_id", as: "category" });
@@ -18,4 +19,5 @@ module.exports = {
   ProductVariant,
   AdminLog,
   Utang,
+  StoreSettings,
 };

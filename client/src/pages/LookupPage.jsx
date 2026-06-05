@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCategories, getProducts } from "../services/api";
+import { getCategories, getProducts, getSetting } from "../services/api";
 import useCartStore from "../store/cartStore";
 import VariantPicker from "../components/pos/VariantPicker";
 import Navbar from "../components/shared/Navbar";
@@ -15,14 +15,13 @@ function LookupPage() {
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1000,
   );
-  const [storeNote, setStoreNote] = useState(
-    localStorage.getItem("store_note") || "",
-  );
+  const [storeNote, setStoreNote] = useState("");
   const { items, addItem } = useCartStore();
 
   useEffect(() => {
     getCategories().then((res) => setCategories(res.data));
     getProducts().then((res) => setProducts(res.data));
+    getSetting("store_note").then((res) => setStoreNote(res.data.value || ""));
   }, []);
 
   useEffect(() => {

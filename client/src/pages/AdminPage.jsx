@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { getCategories, getProducts, adminLogin } from "../services/api";
+import {
+  getCategories,
+  getProducts,
+  adminLogin,
+  getSetting,
+  updateSetting,
+} from "../services/api";
 import api from "../services/api";
 import EditProductModal from "../components/admin/EditProductModal";
 import Navbar from "../components/shared/Navbar";
@@ -54,9 +60,7 @@ function AdminPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Store note
-  const [storeNote, setStoreNote] = useState(
-    localStorage.getItem("store_note") || "",
-  );
+  const [storeNote, setStoreNote] = useState("");
 
   // Selected products for bulk delete
   const [selectedProducts, setSelectedProducts] = useState(new Set());
@@ -64,6 +68,9 @@ function AdminPage() {
   useEffect(() => {
     if (token) {
       loadData();
+      getSetting("store_note").then((res) =>
+        setStoreNote(res.data.value || ""),
+      );
     }
   }, [token]);
 
@@ -350,8 +357,8 @@ function AdminPage() {
             }}
           />
           <button
-            onClick={() => {
-              localStorage.setItem("store_note", storeNote);
+            onClick={async () => {
+              await updateSetting("store_note", storeNote);
               alert("✅ Announcement saved!");
             }}
             style={{

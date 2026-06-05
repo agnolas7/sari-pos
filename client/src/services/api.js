@@ -23,4 +23,9 @@ export const payUtang = (id, amount) =>
 export const updateUtang = (id, data) => api.put(`/utangs/${id}`, data);
 export const deleteUtang = (id) => api.delete(`/utangs/${id}`);
 
+// Store settings
+export const getSetting = (key) => api.get(`/settings/${key}`);
+export const updateSetting = (key, value) =>
+  api.put(`/settings/${key}`, { value });
+
 export default api;
