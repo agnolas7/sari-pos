@@ -160,7 +160,7 @@ function LookupPage() {
             className="boton-elegante"
             style={{ padding: "10px 16px", fontSize: 13, whiteSpace: "nowrap" }}
           >
-            ❓ How to Use
+            ❓ Paano Gamitin
           </button>
         </div>
       </div>
@@ -556,7 +556,7 @@ function LookupPage() {
       {/* Help Modal */}
       {showHelp && (
         <InfoModal
-          title="How to Use"
+          title="Paano Gamitin"
           emoji="❓"
           onClose={() => setShowHelp(false)}
         >
@@ -577,40 +577,64 @@ function LookupPage() {
               textTransform: "uppercase",
             }}
           >
-            ✦ 5 quick steps
+            ✦ Gabay sa paggamit
           </div>
 
           <div style={{ display: "flex", flexDirection: "column" }}>
             {[
               {
                 icon: "🔍",
-                step: "Search a product",
-                desc: "Type the product name or brand in the search bar. If one doesn't work, try the other (e.g. 'Lucky Me' instead of 'Pancit Canton').",
+                step: "Maghanap ng produkto",
+                desc: "I-type ang pangalan ng produkto o brand sa search bar. Kung hindi lumabas, subukan ang ibang pangalan (hal. 'Lucky Me' imbes na 'Pancit Canton').",
                 color: "#6d5fbc",
               },
               {
                 icon: "🗂️",
-                step: "Filter by category",
-                desc: "Use the dropdown to narrow down by type — Snacks, Beverages, Bread, etc.",
+                step: "I-filter sa category",
+                desc: "Gamitin ang dropdown para mas madaling hanapin — Snacks, Beverages, Bread, at iba pa.",
                 color: "#4d7fcc",
               },
               {
                 icon: "👆",
-                step: "Tap a product card",
-                desc: "Tap any card to see its available sizes, flavors, and prices.",
+                step: "I-tap ang produkto",
+                desc: "I-tap ang kahit anong card para makita ang available na sizes, flavors, at presyo nito.",
                 color: "#3a9e7c",
               },
               {
                 icon: "🛒",
-                step: "Add to cart",
-                desc: "Pick a variant to add it to your cart. The floating cart button (bottom-right) shows your item count.",
+                step: "Idagdag sa cart",
+                desc: "Pumili ng variant para idagdag sa cart. Makikita ang bilang ng items sa floating cart button sa kanan-baba ng screen.",
                 color: "#c07a2e",
               },
               {
                 icon: "🧮",
-                step: "Calculate your change",
-                desc: "Open the cart and enter the cash amount — it instantly shows the exact change. The cart is your calculator.",
+                step: "Kalkulahin ang sukli",
+                desc: "Buksan ang cart at i-type ang ibinayad — agad na lalabas ang sukli. Gamitin ito bilang calculator.",
                 color: "#b04a7a",
+              },
+              {
+                icon: "💾",
+                step: "I-save ang benta",
+                desc: "I-tap ang 'Save as [Pangalan]'s Sale' para i-record ang transaksyon. May lalabas na confirmation na may buod ng order — i-confirm para ma-save at awtomatikong macle-clear ang cart para sa susunod na customer.",
+                color: "#0e7490",
+              },
+              {
+                icon: "📋",
+                step: "Utang List",
+                desc: "Dito mo itatala ang mga utang ng customers — magdagdag ng bagong utang, mag-record ng bayad (partial o full), at mag-delete ng natapos nang bayaran.",
+                color: "#7c3aed",
+              },
+              {
+                icon: "📊",
+                step: "Sales History",
+                desc: "Makikita dito ang lahat ng transaksyon kasama ang petsa, oras, at kung sino ang nag-serve. I-tap ang isang row para makita ang mga produktong nabili. Puwede ring mag-filter sa petsa o gumamit ng Today / This Week / This Month.",
+                color: "#059669",
+              },
+              {
+                icon: "🏆",
+                step: "Top Sellers",
+                desc: "Leaderboard ng mga attendant base sa dami ng benta. Pwedeng palitan ng Today, This Week, This Month, o All Time para makita kung sino ang nangunguna.",
+                color: "#d97706",
               },
             ].map(({ icon, step, desc, color }, index, arr) => (
               <div key={step} style={{ display: "flex", gap: 0 }}>

@@ -11,6 +11,7 @@ function CartPage() {
     useCartStore();
   const [amountPaid, setAmountPaid] = useState("");
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showSaveConfirm, setShowSaveConfirm] = useState(false);
   const [showAttendantPicker, setShowAttendantPicker] = useState(false);
   const [attendants, setAttendants] = useState([]);
   const [saleSaved, setSaleSaved] = useState(false);
@@ -39,8 +40,12 @@ function CartPage() {
         attendant_id: activeAttendant.id,
         total,
         item_count: itemCount,
+        items,
       });
       setSaleSaved(true);
+      clearCart();
+      setAmountPaid("");
+      setShowSaveConfirm(false);
       setTimeout(() => setSaleSaved(false), 2500);
     } catch (e) {
       // silent fail for family use
@@ -352,7 +357,7 @@ function CartPage() {
             {/* Save Sale */}
             {activeAttendant && (
               <button
-                onClick={handleSaveSale}
+                onClick={() => setShowSaveConfirm(true)}
                 style={{
                   width: "100%",
                   marginTop: 8,
@@ -462,6 +467,147 @@ function CartPage() {
                 }}
               >
                 Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save Sale Confirmation Modal */}
+      {showSaveConfirm && activeAttendant && (
+        <div
+          onClick={() => setShowSaveConfirm(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,14,71,0.45)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 200,
+            padding: 16,
+            backdropFilter: "blur(4px)",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "white",
+              borderRadius: 20,
+              width: "100%",
+              maxWidth: 380,
+              padding: "28px 24px 24px",
+              boxShadow: "0 24px 64px rgba(15,14,71,0.25)",
+            }}
+          >
+            {/* Attendant badge */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+              <div
+                style={{
+                  width: 52,
+                  height: 52,
+                  borderRadius: 16,
+                  background: `linear-gradient(135deg, ${activeAttendant.color} 0%, ${activeAttendant.color}bb 100%)`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 26,
+                  boxShadow: `0 6px 18px ${activeAttendant.color}44`,
+                  flexShrink: 0,
+                }}
+              >
+                {activeAttendant.emoji}
+              </div>
+              <div>
+                <div style={{ fontSize: 11, color: "#8886ac", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 2 }}>
+                  Saving sale for
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: "#1e1b4b" }}>
+                  {activeAttendant.name}
+                </div>
+              </div>
+            </div>
+
+            {/* Order summary */}
+            <div
+              style={{
+                background: "#f8f7fe",
+                borderRadius: 14,
+                padding: "14px 16px",
+                marginBottom: 20,
+                border: "1.5px solid #e5e3f0",
+              }}
+            >
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#8886ac", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 10 }}>
+                Order Summary
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 180, overflowY: "auto" }}>
+                {items.map((item) => (
+                  <div key={item.variantId} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: "#1e1b4b" }}>{item.productName}</span>
+                      {(item.size || item.flavor) && (
+                        <span style={{ marginLeft: 5, fontSize: 11, color: "#8886ac" }}>
+                          {[item.size, item.flavor].filter(Boolean).join(" / ")}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", gap: 10, flexShrink: 0, alignItems: "center" }}>
+                      <span style={{ fontSize: 12, color: "#a09ec0" }}>×{item.quantity}</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: "#505081" }}>
+                        ₱{(item.price * item.quantity).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ borderTop: "1.5px solid #e5e3f0", marginTop: 12, paddingTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: "#1e1b4b" }}>Total</span>
+                <span style={{ fontSize: 18, fontWeight: 800, color: "#505081" }}>₱{total.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <p style={{ fontSize: 13, color: "#8886ac", margin: "0 0 20px", textAlign: "center" }}>
+              This will save the sale and clear the cart.
+            </p>
+
+            <div style={{ display: "flex", gap: 10 }}>
+              <button
+                onClick={() => setShowSaveConfirm(false)}
+                style={{
+                  flex: 1,
+                  padding: "12px",
+                  borderRadius: 10,
+                  border: "1.5px solid #d1cee8",
+                  background: "white",
+                  color: "#505081",
+                  fontWeight: 700,
+                  fontSize: 14,
+                  cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveSale}
+                style={{
+                  flex: 2,
+                  padding: "12px",
+                  borderRadius: 10,
+                  border: "none",
+                  background: `linear-gradient(135deg, ${activeAttendant.color} 0%, ${activeAttendant.color}cc 100%)`,
+                  color: "white",
+                  fontWeight: 700,
+                  fontSize: 14,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  boxShadow: `0 4px 14px ${activeAttendant.color}44`,
+                }}
+              >
+                💾 Confirm & Save
               </button>
             </div>
           </div>

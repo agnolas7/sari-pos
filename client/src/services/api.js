@@ -60,5 +60,7 @@ export const deleteAttendant = (id) => api.delete(`/attendants/${id}`);
 export const recordSale = (data) => api.post("/sales", data);
 export const getLeaderboard = (period = "all") =>
   api.get(`/sales/leaderboard?period=${period}`);
+export const getSalesHistory = (params = {}) =>
+  api.get("/sales/history", { params });
 
 export default api;

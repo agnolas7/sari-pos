@@ -4,6 +4,7 @@ import CartPage from "./pages/CartPage";
 import AdminPage from "./pages/AdminPage";
 import UtangPage from "./pages/UtangPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
+import SalesHistoryPage from "./pages/SalesHistoryPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/utang" element={<UtangPage />} />
         <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/sales" element={<SalesHistoryPage />} />
       </Routes>
     </BrowserRouter>
   );

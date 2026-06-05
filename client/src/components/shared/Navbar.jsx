@@ -28,6 +28,7 @@ function Navbar() {
   const navItems = [
     { path: "/", label: "Store", icon: "🛒" },
     { path: "/utang", label: "Utang List", icon: "📋" },
+    { path: "/sales", label: "Sales", icon: "📊" },
     { path: "/leaderboard", label: "Top Sellers", icon: "🏆" },
     { path: "/admin", label: "Admin", icon: "⚙️" },
   ];

@@ -886,7 +886,8 @@ function UtangPage() {
                     width: "48px",
                     height: "48px",
                     borderRadius: "12px",
-                    background: "linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)",
+                    background:
+                      "linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -1064,7 +1065,8 @@ function UtangPage() {
                   onMouseOver={(e) => {
                     e.target.style.background = "#b91c1c";
                     e.target.style.transform = "translateY(-2px)";
-                    e.target.style.boxShadow = "0 4px 12px rgba(220, 38, 38, 0.3)";
+                    e.target.style.boxShadow =
+                      "0 4px 12px rgba(220, 38, 38, 0.3)";
                   }}
                   onMouseOut={(e) => {
                     e.target.style.background = "#dc2626";
