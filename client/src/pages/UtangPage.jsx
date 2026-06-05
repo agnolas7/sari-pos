@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { getUtangs, addUtang, payUtang, deleteUtang } from "../services/api";
+import {
+  getUtangs,
+  addUtang,
+  payUtang,
+  deleteUtang,
+  getAttendants,
+} from "../services/api";
+import useAttendantStore from "../store/attendantStore";
 import Navbar from "../components/shared/Navbar";
 
 function UtangPage() {
@@ -13,11 +20,18 @@ function UtangPage() {
     customer_name: "",
     amount: "",
     notes: "",
+    attendant_id: "",
   });
   const [paymentForm, setPaymentForm] = useState({ id: null, amount: "" });
+  const [attendants, setAttendants] = useState([]);
+  const [deleteModal, setDeleteModal] = useState({ open: false, utang: null });
+  const { activeAttendant } = useAttendantStore();
 
   useEffect(() => {
     loadUtangs();
+    getAttendants()
+      .then((res) => setAttendants(res.data))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -44,7 +58,12 @@ function UtangPage() {
     try {
       const response = await addUtang(newUtang);
       console.log("Utang added:", response.data);
-      setNewUtang({ customer_name: "", amount: "", notes: "" });
+      setNewUtang({
+        customer_name: "",
+        amount: "",
+        notes: "",
+        attendant_id: "",
+      });
       setShowAddForm(false);
       await loadUtangs();
       alert("✅ Utang added!");
@@ -71,13 +90,19 @@ function UtangPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this utang record?")) return;
+    const utang = utangs.find((u) => u.id === id);
+    setDeleteModal({ open: true, utang });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteModal.utang) return;
     try {
-      await deleteUtang(id);
+      await deleteUtang(deleteModal.utang.id);
+      setDeleteModal({ open: false, utang: null });
       loadUtangs();
-      alert("✅ Deleted!");
     } catch (err) {
       alert("Error deleting utang");
+      setDeleteModal({ open: false, utang: null });
     }
   };
 
@@ -250,6 +275,98 @@ function UtangPage() {
                 boxSizing: "border-box",
               }}
             />
+
+            {/* Attendant picker */}
+            <div style={{ marginBottom: 16 }}>
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: "#64748b",
+                  marginBottom: 8,
+                }}
+              >
+                👤 Served by
+              </div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  onClick={() => setNewUtang({ ...newUtang, attendant_id: "" })}
+                  style={{
+                    padding: "8px 14px",
+                    borderRadius: 10,
+                    border: !newUtang.attendant_id
+                      ? "2px solid #505081"
+                      : "1.5px solid #e2e8f0",
+                    background: !newUtang.attendant_id ? "#ede9fe" : "white",
+                    color: !newUtang.attendant_id ? "#505081" : "#94a3b8",
+                    fontWeight: 700,
+                    fontSize: 13,
+                    cursor: "pointer",
+                  }}
+                >
+                  None
+                </button>
+                {attendants.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    onClick={() =>
+                      setNewUtang({ ...newUtang, attendant_id: a.id })
+                    }
+                    style={{
+                      padding: "8px 14px",
+                      borderRadius: 10,
+                      border:
+                        newUtang.attendant_id === a.id
+                          ? `2px solid ${a.color}`
+                          : "1.5px solid #e2e8f0",
+                      background:
+                        newUtang.attendant_id === a.id
+                          ? `${a.color}18`
+                          : "white",
+                      color:
+                        newUtang.attendant_id === a.id ? a.color : "#64748b",
+                      fontWeight: 700,
+                      fontSize: 13,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                      transition: "all 0.15s",
+                    }}
+                  >
+                    <span>{a.emoji}</span>
+                    <span>{a.name}</span>
+                  </button>
+                ))}
+              </div>
+              {activeAttendant && !newUtang.attendant_id && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setNewUtang({
+                      ...newUtang,
+                      attendant_id: activeAttendant.id,
+                    })
+                  }
+                  style={{
+                    marginTop: 8,
+                    background: "none",
+                    border: "none",
+                    color: "#505081",
+                    fontSize: 12,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                    padding: 0,
+                  }}
+                >
+                  Use active attendant ({activeAttendant.emoji}{" "}
+                  {activeAttendant.name})
+                </button>
+              )}
+            </div>
             <div style={{ display: "flex", gap: 12 }}>
               <button
                 onClick={handleAddUtang}
@@ -416,6 +533,33 @@ function UtangPage() {
                       >
                         ID: {utang.id}
                       </div>
+                      {utang.attendant && (
+                        <div
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 5,
+                            marginTop: 6,
+                            background: `${utang.attendant.color}14`,
+                            border: `1px solid ${utang.attendant.color}33`,
+                            borderRadius: 8,
+                            padding: "3px 9px",
+                          }}
+                        >
+                          <span style={{ fontSize: 13 }}>
+                            {utang.attendant.emoji}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: 11,
+                              fontWeight: 700,
+                              color: utang.attendant.color,
+                            }}
+                          >
+                            {utang.attendant.name}
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <div
                       style={{
@@ -699,6 +843,258 @@ function UtangPage() {
             })}
           </div>
         )}
+
+        {/* Delete Confirmation Modal */}
+        {deleteModal.open && deleteModal.utang && (
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0, 0, 0, 0.5)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 1000,
+              padding: "16px",
+              animation: "fadeIn 0.2s ease-out",
+            }}
+            onClick={() => setDeleteModal({ open: false, utang: null })}
+          >
+            <div
+              style={{
+                background: "white",
+                borderRadius: "16px",
+                padding: "24px",
+                maxWidth: "400px",
+                width: "100%",
+                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
+                animation: "slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  marginBottom: "16px",
+                }}
+              >
+                <div
+                  style={{
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "12px",
+                    background: "linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "24px",
+                  }}
+                >
+                  ⚠️
+                </div>
+                <div>
+                  <h2
+                    style={{
+                      margin: "0 0 4px 0",
+                      fontSize: "18px",
+                      fontWeight: "800",
+                      color: "#1e293b",
+                    }}
+                  >
+                    Delete Record?
+                  </h2>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: "12px",
+                      color: "#64748b",
+                    }}
+                  >
+                    This action cannot be undone
+                  </p>
+                </div>
+              </div>
+
+              {/* Record Details */}
+              <div
+                style={{
+                  background: "#f1f5f9",
+                  borderRadius: "12px",
+                  padding: "16px",
+                  marginBottom: "20px",
+                  border: "1px solid #e2e8f0",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "12px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      color: "#64748b",
+                      fontWeight: "600",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    Customer
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      color: "#1e293b",
+                    }}
+                  >
+                    {deleteModal.utang.customer_name}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "12px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      color: "#64748b",
+                      fontWeight: "600",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    Total Amount
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      color: "#dc2626",
+                    }}
+                  >
+                    ₱{parseFloat(deleteModal.utang.amount).toFixed(2)}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      color: "#64748b",
+                      fontWeight: "600",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    Remaining Balance
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      color: "#1e293b",
+                    }}
+                  >
+                    ₱
+                    {(
+                      parseFloat(deleteModal.utang.amount) -
+                      parseFloat(deleteModal.utang.paid_amount)
+                    ).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                }}
+              >
+                <button
+                  onClick={() => setDeleteModal({ open: false, utang: null })}
+                  style={{
+                    flex: 1,
+                    padding: "12px 16px",
+                    background: "#f1f5f9",
+                    color: "#64748b",
+                    border: "1.5px solid #e2e8f0",
+                    borderRadius: "10px",
+                    fontWeight: "700",
+                    fontSize: "14px",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.background = "#e2e8f0";
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.background = "#f1f5f9";
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  style={{
+                    flex: 1,
+                    padding: "12px 16px",
+                    background: "#dc2626",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "10px",
+                    fontWeight: "700",
+                    fontSize: "14px",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.background = "#b91c1c";
+                    e.target.style.transform = "translateY(-2px)";
+                    e.target.style.boxShadow = "0 4px 12px rgba(220, 38, 38, 0.3)";
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.background = "#dc2626";
+                    e.target.style.transform = "translateY(0)";
+                    e.target.style.boxShadow = "none";
+                  }}
+                >
+                  🗑️ Delete Permanently
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <style>{`
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes slideUp {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}</style>
       </div>
     </div>
   );

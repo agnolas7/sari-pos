@@ -17,6 +17,9 @@ ProductVariant.belongsTo(Product, { foreignKey: "product_id", as: "product" });
 Attendant.hasMany(Sale, { foreignKey: "attendant_id", as: "sales" });
 Sale.belongsTo(Attendant, { foreignKey: "attendant_id", as: "attendant" });
 
+Attendant.hasMany(Utang, { foreignKey: "attendant_id", as: "utangs" });
+Utang.belongsTo(Attendant, { foreignKey: "attendant_id", as: "attendant" });
+
 module.exports = {
   sequelize,
   Category,

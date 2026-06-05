@@ -29,6 +29,10 @@ const Utang = sequelize.define(
       type: DataTypes.ENUM("pending", "partially_paid", "paid"),
       defaultValue: "pending",
     },
+    attendant_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   },
   {
     tableName: "utangs",

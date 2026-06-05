@@ -1,12 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const { Utang } = require("../models");
+const Attendant = require("../models/Attendant");
 
 // GET all utangs
 router.get("/", async (req, res) => {
   try {
     const utangs = await Utang.findAll({
       order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: Attendant,
+          as: "attendant",
+          attributes: ["id", "name", "emoji", "color"],
+        },
+      ],
     });
     res.json(utangs);
   } catch (err) {
@@ -28,11 +36,12 @@ router.get("/:id", async (req, res) => {
 // POST create new utang
 router.post("/", async (req, res) => {
   try {
-    const { customer_name, amount, notes } = req.body;
+    const { customer_name, amount, notes, attendant_id } = req.body;
     const utang = await Utang.create({
       customer_name,
       amount,
       notes,
+      attendant_id: attendant_id || null,
       status: "pending",
     });
     res.json(utang);

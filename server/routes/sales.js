@@ -47,7 +47,13 @@ router.get("/leaderboard", async (req, res) => {
         [sequelize.fn("COUNT", sequelize.col("Sale.id")), "transaction_count"],
       ],
       group: ["attendant_id"],
-      include: [{ model: Attendant, as: "attendant", attributes: ["id", "name", "emoji", "color"] }],
+      include: [
+        {
+          model: Attendant,
+          as: "attendant",
+          attributes: ["id", "name", "emoji", "color"],
+        },
+      ],
       order: [[sequelize.fn("SUM", sequelize.col("total")), "DESC"]],
     });
 

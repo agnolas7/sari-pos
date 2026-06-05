@@ -99,7 +99,9 @@ function AdminPage() {
       getSetting("store_note").then((res) =>
         setStoreNote(res.data.value || ""),
       );
-      getAttendants().then((res) => setAttendants(res.data)).catch(() => {});
+      getAttendants()
+        .then((res) => setAttendants(res.data))
+        .catch(() => {});
     }
   }, [token]);
 
@@ -294,7 +296,8 @@ function AdminPage() {
       <div
         style={{
           minHeight: "100vh",
-          background: "linear-gradient(135deg, #1e1b4b 0%, #272757 50%, #3b3278 100%)",
+          background:
+            "linear-gradient(135deg, #1e1b4b 0%, #272757 50%, #3b3278 100%)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -302,9 +305,42 @@ function AdminPage() {
         }}
       >
         {/* Decorative bubbles */}
-        <div style={{ position: "fixed", top: "8%", left: "10%", width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.03)", pointerEvents: "none" }} />
-        <div style={{ position: "fixed", bottom: "12%", right: "8%", width: 180, height: 180, borderRadius: "50%", background: "rgba(255,255,255,0.04)", pointerEvents: "none" }} />
-        <div style={{ position: "fixed", top: "40%", right: "15%", width: 70, height: 70, borderRadius: "50%", background: "rgba(255,255,255,0.03)", pointerEvents: "none" }} />
+        <div
+          style={{
+            position: "fixed",
+            top: "8%",
+            left: "10%",
+            width: 120,
+            height: 120,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.03)",
+            pointerEvents: "none",
+          }}
+        />
+        <div
+          style={{
+            position: "fixed",
+            bottom: "12%",
+            right: "8%",
+            width: 180,
+            height: 180,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.04)",
+            pointerEvents: "none",
+          }}
+        />
+        <div
+          style={{
+            position: "fixed",
+            top: "40%",
+            right: "15%",
+            width: 70,
+            height: 70,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.03)",
+            pointerEvents: "none",
+          }}
+        />
 
         <div
           style={{
@@ -326,7 +362,9 @@ function AdminPage() {
                 width: 68,
                 height: 68,
                 borderRadius: 20,
-                background: isLocked ? "rgba(239,68,68,0.20)" : "rgba(255,255,255,0.12)",
+                background: isLocked
+                  ? "rgba(239,68,68,0.20)"
+                  : "rgba(255,255,255,0.12)",
                 border: `2px solid ${isLocked ? "rgba(239,68,68,0.40)" : "rgba(255,255,255,0.20)"}`,
                 display: "inline-flex",
                 alignItems: "center",
@@ -337,11 +375,27 @@ function AdminPage() {
             >
               {isLocked ? "🔒" : "🔐"}
             </div>
-            <h2 style={{ fontSize: 22, fontWeight: 900, color: "white", margin: "0 0 4px", letterSpacing: "-0.02em" }}>
+            <h2
+              style={{
+                fontSize: 22,
+                fontWeight: 900,
+                color: "white",
+                margin: "0 0 4px",
+                letterSpacing: "-0.02em",
+              }}
+            >
               Admin Access
             </h2>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.50)", margin: 0 }}>
-              {isLocked ? "Account temporarily locked" : "Enter your PIN to continue"}
+            <p
+              style={{
+                fontSize: 13,
+                color: "rgba(255,255,255,0.50)",
+                margin: 0,
+              }}
+            >
+              {isLocked
+                ? "Account temporarily locked"
+                : "Enter your PIN to continue"}
             </p>
           </div>
 
@@ -356,17 +410,40 @@ function AdminPage() {
                 marginBottom: 8,
               }}
             >
-              <div style={{ fontSize: 36, fontWeight: 900, color: "#fca5a5", letterSpacing: 2, marginBottom: 6 }}>
-                {mins > 0 ? `${mins}:${String(secs).padStart(2, "0")}` : `${secs}s`}
+              <div
+                style={{
+                  fontSize: 36,
+                  fontWeight: 900,
+                  color: "#fca5a5",
+                  letterSpacing: 2,
+                  marginBottom: 6,
+                }}
+              >
+                {mins > 0
+                  ? `${mins}:${String(secs).padStart(2, "0")}`
+                  : `${secs}s`}
               </div>
-              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.60)", margin: 0 }}>
+              <p
+                style={{
+                  fontSize: 13,
+                  color: "rgba(255,255,255,0.60)",
+                  margin: 0,
+                }}
+              >
                 Too many failed attempts. Please wait.
               </p>
             </div>
           ) : (
             <>
               {/* PIN dots display */}
-              <div style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: 20 }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: 10,
+                  marginBottom: 20,
+                }}
+              >
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div
                     key={i}
@@ -394,7 +471,9 @@ function AdminPage() {
                   width: "100%",
                   padding: "14px 16px",
                   borderRadius: 14,
-                  border: error ? "1.5px solid rgba(239,68,68,0.60)" : "1.5px solid rgba(255,255,255,0.18)",
+                  border: error
+                    ? "1.5px solid rgba(239,68,68,0.60)"
+                    : "1.5px solid rgba(255,255,255,0.18)",
                   background: "rgba(255,255,255,0.08)",
                   color: "white",
                   fontSize: 18,
@@ -420,13 +499,24 @@ function AdminPage() {
                   }}
                 >
                   <span style={{ fontSize: 15 }}>⚠️</span>
-                  <span style={{ fontSize: 13, color: "#fca5a5", fontWeight: 600 }}>{error}</span>
+                  <span
+                    style={{ fontSize: 13, color: "#fca5a5", fontWeight: 600 }}
+                  >
+                    {error}
+                  </span>
                 </div>
               )}
 
               {/* Attempt warning dots */}
               {attemptsLeft < 5 && attemptsLeft > 0 && (
-                <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 14 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: 6,
+                    marginBottom: 14,
+                  }}
+                >
                   {Array.from({ length: 5 }).map((_, i) => (
                     <div
                       key={i}
@@ -434,7 +524,10 @@ function AdminPage() {
                         width: 8,
                         height: 8,
                         borderRadius: "50%",
-                        background: i < attemptsLeft ? "#fbbf24" : "rgba(255,255,255,0.15)",
+                        background:
+                          i < attemptsLeft
+                            ? "#fbbf24"
+                            : "rgba(255,255,255,0.15)",
                         transition: "background 0.2s",
                       }}
                     />
@@ -523,65 +616,177 @@ function AdminPage() {
         >
           <h2 style={{ fontWeight: 700, marginBottom: 4 }}>👥 Attendants</h2>
           <p style={{ fontSize: 13, color: "#9ca3af", margin: "0 0 14px" }}>
-            Add profiles for each store attendant so they can track their own sales.
+            Add profiles for each store attendant so they can track their own
+            sales.
           </p>
 
           {/* Existing attendants */}
           {attendants.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 8,
+                marginBottom: 16,
+              }}
+            >
               {attendants.map((a) =>
                 editingAttendant?.id === a.id ? (
                   <div
                     key={a.id}
-                    style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", background: "#f7f6fd", borderRadius: 10, padding: 10 }}
+                    style={{
+                      display: "flex",
+                      gap: 8,
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                      background: "#f7f6fd",
+                      borderRadius: 10,
+                      padding: 10,
+                    }}
                   >
                     <input
                       value={editingAttendant.emoji}
-                      onChange={(e) => setEditingAttendant((prev) => ({ ...prev, emoji: e.target.value }))}
-                      style={{ width: 52, textAlign: "center", fontSize: 20, borderRadius: 8, border: "1px solid #ddd", padding: "6px 4px" }}
+                      onChange={(e) =>
+                        setEditingAttendant((prev) => ({
+                          ...prev,
+                          emoji: e.target.value,
+                        }))
+                      }
+                      style={{
+                        width: 52,
+                        textAlign: "center",
+                        fontSize: 20,
+                        borderRadius: 8,
+                        border: "1px solid #ddd",
+                        padding: "6px 4px",
+                      }}
                     />
                     <input
                       value={editingAttendant.name}
-                      onChange={(e) => setEditingAttendant((prev) => ({ ...prev, name: e.target.value }))}
-                      style={{ flex: 1, minWidth: 120, padding: "8px 10px", borderRadius: 8, border: "1px solid #ddd", fontSize: 14 }}
+                      onChange={(e) =>
+                        setEditingAttendant((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
+                      style={{
+                        flex: 1,
+                        minWidth: 120,
+                        padding: "8px 10px",
+                        borderRadius: 8,
+                        border: "1px solid #ddd",
+                        fontSize: 14,
+                      }}
                     />
                     <input
                       type="color"
                       value={editingAttendant.color}
-                      onChange={(e) => setEditingAttendant((prev) => ({ ...prev, color: e.target.value }))}
-                      style={{ width: 38, height: 36, borderRadius: 8, border: "1px solid #ddd", padding: 2, cursor: "pointer" }}
+                      onChange={(e) =>
+                        setEditingAttendant((prev) => ({
+                          ...prev,
+                          color: e.target.value,
+                        }))
+                      }
+                      style={{
+                        width: 38,
+                        height: 36,
+                        borderRadius: 8,
+                        border: "1px solid #ddd",
+                        padding: 2,
+                        cursor: "pointer",
+                      }}
                     />
                     <button
                       onClick={async () => {
-                        await updateAttendant(editingAttendant.id, editingAttendant);
+                        await updateAttendant(
+                          editingAttendant.id,
+                          editingAttendant,
+                        );
                         const res = await getAttendants();
                         setAttendants(res.data);
                         setEditingAttendant(null);
                       }}
-                      style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: "#22c55e", color: "white", fontWeight: 700, fontSize: 13, cursor: "pointer" }}
-                    >Save</button>
+                      style={{
+                        padding: "8px 14px",
+                        borderRadius: 8,
+                        border: "none",
+                        background: "#22c55e",
+                        color: "white",
+                        fontWeight: 700,
+                        fontSize: 13,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Save
+                    </button>
                     <button
                       onClick={() => setEditingAttendant(null)}
-                      style={{ padding: "8px 14px", borderRadius: 8, border: "1px solid #e5e7eb", background: "white", fontWeight: 700, fontSize: 13, cursor: "pointer" }}
-                    >Cancel</button>
+                      style={{
+                        padding: "8px 14px",
+                        borderRadius: 8,
+                        border: "1px solid #e5e7eb",
+                        background: "white",
+                        fontWeight: 700,
+                        fontSize: 13,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Cancel
+                    </button>
                   </div>
                 ) : (
                   <div
                     key={a.id}
-                    style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 12px", borderRadius: 10, border: "1px solid #f0eefb", background: "#faf9ff" }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      padding: "10px 12px",
+                      borderRadius: 10,
+                      border: "1px solid #f0eefb",
+                      background: "#faf9ff",
+                    }}
                   >
                     <div
                       style={{
-                        width: 40, height: 40, borderRadius: 12,
+                        width: 40,
+                        height: 40,
+                        borderRadius: 12,
                         background: `linear-gradient(135deg, ${a.color} 0%, ${a.color}bb 100%)`,
-                        display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 20,
+                        flexShrink: 0,
                       }}
-                    >{a.emoji}</div>
-                    <span style={{ flex: 1, fontWeight: 700, fontSize: 14, color: "#1e1b4b" }}>{a.name}</span>
+                    >
+                      {a.emoji}
+                    </div>
+                    <span
+                      style={{
+                        flex: 1,
+                        fontWeight: 700,
+                        fontSize: 14,
+                        color: "#1e1b4b",
+                      }}
+                    >
+                      {a.name}
+                    </span>
                     <button
                       onClick={() => setEditingAttendant({ ...a })}
-                      style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #d1cee8", background: "white", color: "#505081", fontWeight: 600, fontSize: 13, cursor: "pointer" }}
-                    >✏️ Edit</button>
+                      style={{
+                        padding: "6px 12px",
+                        borderRadius: 8,
+                        border: "1px solid #d1cee8",
+                        background: "white",
+                        color: "#505081",
+                        fontWeight: 600,
+                        fontSize: 13,
+                        cursor: "pointer",
+                      }}
+                    >
+                      ✏️ Edit
+                    </button>
                     <button
                       onClick={async () => {
                         if (!window.confirm(`Remove ${a.name}?`)) return;
@@ -589,8 +794,19 @@ function AdminPage() {
                         const res = await getAttendants();
                         setAttendants(res.data);
                       }}
-                      style={{ padding: "6px 12px", borderRadius: 8, border: "none", background: "#fee2e2", color: "#ef4444", fontWeight: 600, fontSize: 13, cursor: "pointer" }}
-                    >✕</button>
+                      style={{
+                        padding: "6px 12px",
+                        borderRadius: 8,
+                        border: "none",
+                        background: "#fee2e2",
+                        color: "#ef4444",
+                        fontWeight: 600,
+                        fontSize: 13,
+                        cursor: "pointer",
+                      }}
+                    >
+                      ✕
+                    </button>
                   </div>
                 ),
               )}
@@ -598,38 +814,81 @@ function AdminPage() {
           )}
 
           {/* Add new attendant */}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              flexWrap: "wrap",
+              alignItems: "center",
+            }}
+          >
             <input
               placeholder="Emoji"
               value={newAttendantEmoji}
               onChange={(e) => setNewAttendantEmoji(e.target.value)}
-              style={{ width: 52, textAlign: "center", fontSize: 20, borderRadius: 8, border: "1px solid #ddd", padding: "8px 4px" }}
+              style={{
+                width: 52,
+                textAlign: "center",
+                fontSize: 20,
+                borderRadius: 8,
+                border: "1px solid #ddd",
+                padding: "8px 4px",
+              }}
             />
             <input
               placeholder="Name (e.g. Ate Nora)"
               value={newAttendantName}
               onChange={(e) => setNewAttendantName(e.target.value)}
-              style={{ flex: 1, minWidth: 140, padding: "8px 12px", borderRadius: 8, border: "1px solid #ddd", fontSize: 14 }}
+              style={{
+                flex: 1,
+                minWidth: 140,
+                padding: "8px 12px",
+                borderRadius: 8,
+                border: "1px solid #ddd",
+                fontSize: 14,
+              }}
             />
             <input
               type="color"
               value={newAttendantColor}
               onChange={(e) => setNewAttendantColor(e.target.value)}
               title="Pick a color"
-              style={{ width: 38, height: 36, borderRadius: 8, border: "1px solid #ddd", padding: 2, cursor: "pointer" }}
+              style={{
+                width: 38,
+                height: 36,
+                borderRadius: 8,
+                border: "1px solid #ddd",
+                padding: 2,
+                cursor: "pointer",
+              }}
             />
             <button
               onClick={async () => {
                 if (!newAttendantName.trim()) return;
-                await createAttendant({ name: newAttendantName.trim(), emoji: newAttendantEmoji, color: newAttendantColor });
+                await createAttendant({
+                  name: newAttendantName.trim(),
+                  emoji: newAttendantEmoji,
+                  color: newAttendantColor,
+                });
                 const res = await getAttendants();
                 setAttendants(res.data);
                 setNewAttendantName("");
                 setNewAttendantEmoji("🙂");
                 setNewAttendantColor("#505081");
               }}
-              style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: "#505081", color: "white", fontWeight: 700, fontSize: 14, cursor: "pointer" }}
-            >+ Add</button>
+              style={{
+                padding: "8px 16px",
+                borderRadius: 8,
+                border: "none",
+                background: "#505081",
+                color: "white",
+                fontWeight: 700,
+                fontSize: 14,
+                cursor: "pointer",
+              }}
+            >
+              + Add
+            </button>
           </div>
         </div>
 

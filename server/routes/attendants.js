@@ -6,7 +6,9 @@ const requireAdmin = require("../middleware/requireAdmin");
 // GET all attendants
 router.get("/", async (req, res) => {
   try {
-    const attendants = await Attendant.findAll({ order: [["createdAt", "ASC"]] });
+    const attendants = await Attendant.findAll({
+      order: [["createdAt", "ASC"]],
+    });
     res.json(attendants);
   } catch (err) {
     res.status(500).json({ error: err.message });
