@@ -16,6 +16,8 @@ function LookupPage() {
     typeof window !== "undefined" ? window.innerWidth : 1000,
   );
   const [storeNote, setStoreNote] = useState("");
+  const [showAnnouncement, setShowAnnouncement] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const { items, addItem } = useCartStore();
 
   useEffect(() => {
@@ -113,26 +115,31 @@ function LookupPage() {
           onChange={setSelectedCategory}
           isMobile={isMobile}
         />
-      </div>
 
-      {/* Announcement Banner */}
-      {storeNote && (
-        <div
-          style={{
-            background: "#fffbeb",
-            borderBottom: "2px solid #fbbf24",
-            padding: "11px 24px",
-            fontSize: 14,
-            fontWeight: 600,
-            color: "#92400e",
-            textAlign: "center",
-            whiteSpace: "pre-wrap",
-            letterSpacing: "0.01em",
-          }}
-        >
-          📢 {storeNote}
+        {/* Action buttons */}
+        <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
+          {storeNote && (
+            <button
+              onClick={() => setShowAnnouncement(true)}
+              className="boton-elegante"
+              style={{
+                padding: "10px 16px",
+                fontSize: 13,
+                whiteSpace: "nowrap",
+              }}
+            >
+              📢 Announcements
+            </button>
+          )}
+          <button
+            onClick={() => setShowHelp(true)}
+            className="boton-elegante"
+            style={{ padding: "10px 16px", fontSize: 13, whiteSpace: "nowrap" }}
+          >
+            ❓ How to Use
+          </button>
         </div>
-      )}
+      </div>
 
       {/* Product Grid */}
       <div
@@ -284,6 +291,98 @@ function LookupPage() {
           }}
           onClose={() => setSelectedProduct(null)}
         />
+      )}
+
+      {/* Announcement Modal */}
+      {showAnnouncement && (
+        <InfoModal
+          title="📢 Price Guide"
+          onClose={() => setShowAnnouncement(false)}
+        >
+          <p
+            style={{
+              whiteSpace: "pre-wrap",
+              lineHeight: 2,
+              fontSize: 15,
+              color: "#1e1b4b",
+            }}
+          >
+            {storeNote}
+          </p>
+        </InfoModal>
+      )}
+
+      {/* Help Modal */}
+      {showHelp && (
+        <InfoModal title="❓ How to Use" onClose={() => setShowHelp(false)}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+            {[
+              {
+                icon: "🔍",
+                step: "Search a product",
+                desc: "Type the product name or brand in the search bar. If one doesn't work, try the other (e.g. search 'Lucky Me' instead of 'Pancit Canton').",
+              },
+              {
+                icon: "🗂️",
+                step: "Filter by category",
+                desc: "Use the dropdown to narrow down by type — Snacks, Beverages, Bread, etc.",
+              },
+              {
+                icon: "👆",
+                step: "Tap a product card",
+                desc: "Tap any card to see its available sizes, flavors, and prices.",
+              },
+              {
+                icon: "🛒",
+                step: "Add to cart",
+                desc: "Pick a variant to add it to your cart. The floating cart button (bottom-right) shows how many items you have.",
+              },
+              {
+                icon: "🧮",
+                step: "Calculate your change",
+                desc: "Open the cart and enter the customer's cash amount — it will automatically show the exact change. The cart is your calculator, there's no checkout button.",
+              },
+            ].map(({ icon, step, desc }) => (
+              <div
+                key={step}
+                style={{ display: "flex", gap: 14, alignItems: "flex-start" }}
+              >
+                <span
+                  style={{
+                    fontSize: 22,
+                    width: 44,
+                    height: 44,
+                    background: "#ede9fe",
+                    borderRadius: 12,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  {icon}
+                </span>
+                <div>
+                  <div
+                    style={{
+                      fontWeight: 700,
+                      fontSize: 14,
+                      color: "#1e1b4b",
+                      marginBottom: 3,
+                    }}
+                  >
+                    {step}
+                  </div>
+                  <div
+                    style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.65 }}
+                  >
+                    {desc}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </InfoModal>
       )}
     </div>
   );
@@ -573,6 +672,96 @@ function CategoryDropdown({ categories, selected, onChange, isMobile }) {
           })}
         </div>
       )}
+    </div>
+  );
+}
+
+function InfoModal({ title, onClose, children }) {
+  // Close on backdrop click or Escape key
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(15,14,71,0.55)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 200,
+        padding: 16,
+        backdropFilter: "blur(4px)",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: "white",
+          borderRadius: 20,
+          width: "100%",
+          maxWidth: 480,
+          maxHeight: "80vh",
+          display: "flex",
+          flexDirection: "column",
+          boxShadow: "0 24px 64px rgba(15,14,71,0.35)",
+          animation: "dropdownSlide 0.22s cubic-bezier(0.4,0,0.2,1)",
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "18px 20px 14px",
+            borderBottom: "1px solid #f0eefb",
+            flexShrink: 0,
+          }}
+        >
+          <h2
+            style={{
+              fontSize: 17,
+              fontWeight: 800,
+              color: "#1e1b4b",
+              margin: 0,
+            }}
+          >
+            {title}
+          </h2>
+          <button
+            onClick={onClose}
+            style={{
+              background: "#f0eefb",
+              border: "none",
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              fontSize: 14,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#505081",
+              fontWeight: 700,
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Body */}
+        <div style={{ overflowY: "auto", padding: "18px 20px 24px" }}>
+          {children}
+        </div>
+      </div>
     </div>
   );
 }

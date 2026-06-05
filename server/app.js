@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const { sequelize } = require("./models");
 const seedCategories = require("./seeds/categories");
+const seedSettings = require("./seeds/settings");
 
 const app = express();
 
@@ -36,6 +37,7 @@ sequelize
   .then(() => {
     // Seed default categories
     seedCategories();
+    seedSettings();
 
     app.listen(PORT, () => {
       console.log(`✅ Server running on http://localhost:${PORT}`);
