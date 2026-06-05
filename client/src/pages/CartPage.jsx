@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useCartStore from "../store/cartStore";
+import useAttendantStore from "../store/attendantStore";
 import Navbar from "../components/shared/Navbar";
+import { getAttendants, recordSale } from "../services/api";
 
 function CartPage() {
   const navigate = useNavigate();
@@ -9,6 +11,10 @@ function CartPage() {
     useCartStore();
   const [amountPaid, setAmountPaid] = useState("");
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showAttendantPicker, setShowAttendantPicker] = useState(false);
+  const [attendants, setAttendants] = useState([]);
+  const [saleSaved, setSaleSaved] = useState(false);
+  const { activeAttendant, setActiveAttendant } = useAttendantStore();
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1000,
   );
@@ -18,6 +24,22 @@ function CartPage() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    getAttendants().then((res) => setAttendants(res.data)).catch(() => {});
+  }, []);
+
+  const handleSaveSale = async () => {
+    if (!activeAttendant || items.length === 0) return;
+    try {
+      const itemCount = items.reduce((s, i) => s + i.quantity, 0);
+      await recordSale({ attendant_id: activeAttendant.id, total, item_count: itemCount });
+      setSaleSaved(true);
+      setTimeout(() => setSaleSaved(false), 2500);
+    } catch (e) {
+      // silent fail for family use
+    }
+  };
 
   const total = getTotal();
   const change = parseFloat(amountPaid) - total;
@@ -38,7 +60,7 @@ function CartPage() {
             display: "flex",
             alignItems: "center",
             gap: 12,
-            marginBottom: 16,
+            marginBottom: 12,
           }}
         >
           <button
@@ -52,6 +74,62 @@ function CartPage() {
           >
             🛒 Cart
           </h1>
+        </div>
+
+        {/* Attendant strip */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            background: activeAttendant
+              ? `linear-gradient(135deg, ${activeAttendant.color}18 0%, ${activeAttendant.color}08 100%)`
+              : "#f0eff7",
+            border: activeAttendant
+              ? `1.5px solid ${activeAttendant.color}44`
+              : "1.5px dashed #c4c2e0",
+            borderRadius: 14,
+            padding: "10px 14px",
+            marginBottom: 16,
+            cursor: "pointer",
+            transition: "all 0.2s",
+          }}
+          onClick={() => setShowAttendantPicker(true)}
+        >
+          {activeAttendant ? (
+            <>
+              <div
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 12,
+                  background: `linear-gradient(135deg, ${activeAttendant.color} 0%, ${activeAttendant.color}bb 100%)`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 20,
+                  flexShrink: 0,
+                  boxShadow: `0 4px 12px ${activeAttendant.color}44`,
+                }}
+              >
+                {activeAttendant.emoji}
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 11, color: "#8886ac", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>Serving</div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: "#1e1b4b" }}>{activeAttendant.name}</div>
+              </div>
+              <span style={{ fontSize: 12, color: "#a09ec0" }}>Tap to switch ›</span>
+            </>
+          ) : (
+            <>
+              <div style={{ fontSize: 26 }}>👤</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "#505081" }}>No attendant selected</div>
+                <div style={{ fontSize: 12, color: "#a09ec0" }}>Tap to pick who's serving</div>
+              </div>
+              <span style={{ fontSize: 18, color: "#c4c2e0" }}>›</span>
+            </>
+          )}
         </div>
 
         {/* Empty state */}
@@ -242,6 +320,35 @@ function CartPage() {
             >
               Clear Cart
             </button>
+
+            {/* Save Sale */}
+            {activeAttendant && (
+              <button
+                onClick={handleSaveSale}
+                style={{
+                  width: "100%",
+                  marginTop: 8,
+                  padding: "12px",
+                  background: saleSaved
+                    ? "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)"
+                    : `linear-gradient(135deg, ${activeAttendant.color} 0%, ${activeAttendant.color}cc 100%)`,
+                  color: "white",
+                  border: "none",
+                  borderRadius: 8,
+                  fontWeight: 700,
+                  fontSize: 15,
+                  cursor: "pointer",
+                  transition: "background 0.3s",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                }}
+              >
+                <span style={{ fontSize: 18 }}>{saleSaved ? "✅" : "💾"}</span>
+                {saleSaved ? "Sale Saved!" : `Save as ${activeAttendant.name}'s Sale`}
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -327,6 +434,98 @@ function CartPage() {
                 Clear
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Attendant Picker Modal */}
+      {showAttendantPicker && (
+        <div
+          onClick={() => setShowAttendantPicker(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(8,7,40,0.60)",
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "center",
+            zIndex: 200,
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "white",
+              borderRadius: "24px 24px 0 0",
+              width: "100%",
+              maxWidth: 540,
+              padding: "20px 20px 32px",
+              boxShadow: "0 -8px 48px rgba(8,7,40,0.30)",
+            }}
+          >
+            {/* Drag handle */}
+            <div style={{ width: 40, height: 4, borderRadius: 2, background: "#e5e3f0", margin: "0 auto 18px" }} />
+            <h3 style={{ fontSize: 17, fontWeight: 800, color: "#1e1b4b", margin: "0 0 4px" }}>Who's serving? 👋</h3>
+            <p style={{ fontSize: 13, color: "#a09ec0", margin: "0 0 18px" }}>Pick your profile to track sales</p>
+
+            {attendants.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "24px 0", color: "#bbb" }}>
+                <div style={{ fontSize: 36, marginBottom: 8 }}>👥</div>
+                <p style={{ fontSize: 14, margin: 0 }}>No attendants yet. Ask admin to add some!</p>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {attendants.map((a) => {
+                  const isActive = activeAttendant?.id === a.id;
+                  return (
+                    <button
+                      key={a.id}
+                      onClick={() => { setActiveAttendant(a); setShowAttendantPicker(false); }}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 14,
+                        padding: "12px 16px",
+                        borderRadius: 16,
+                        border: isActive ? `2px solid ${a.color}` : "1.5px solid #e5e3f0",
+                        background: isActive
+                          ? `linear-gradient(135deg, ${a.color}15 0%, ${a.color}08 100%)`
+                          : "white",
+                        cursor: "pointer",
+                        textAlign: "left",
+                        transition: "all 0.18s",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 46,
+                          height: 46,
+                          borderRadius: 14,
+                          background: `linear-gradient(135deg, ${a.color} 0%, ${a.color}bb 100%)`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: 22,
+                          flexShrink: 0,
+                          boxShadow: `0 4px 14px ${a.color}44`,
+                        }}
+                      >
+                        {a.emoji}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 800, fontSize: 15, color: "#1e1b4b" }}>{a.name}</div>
+                      </div>
+                      {isActive && (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={a.color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       )}

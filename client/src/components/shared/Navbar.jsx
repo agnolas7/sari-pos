@@ -64,6 +64,13 @@ function Navbar() {
         </button>
 
         <button
+          onClick={() => navigate("/leaderboard")}
+          className={`boton-elegante${isActive("/leaderboard") ? " active" : ""}`}
+        >
+          🏆 Top Sellers
+        </button>
+
+        <button
           onClick={() => navigate("/admin")}
           className={`boton-elegante${isActive("/admin") ? " active" : ""}`}
         >

@@ -16,6 +16,8 @@ app.use("/api/products", require("./routes/products"));
 app.use("/api/admin", require("./routes/admin"));
 app.use("/api/utangs", require("./routes/utangs"));
 app.use("/api/settings", require("./routes/settings"));
+app.use("/api/attendants", require("./routes/attendants"));
+app.use("/api/sales", require("./routes/sales"));
 
 app.get("/", (req, res) => {
   res.json({

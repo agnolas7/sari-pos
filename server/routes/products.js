@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Product, ProductVariant, Category } = require("../models");
+const requireAdmin = require("../middleware/requireAdmin");
 
 // GET all products with their variants and category
 router.get("/", async (req, res) => {
@@ -46,7 +47,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST create new product with variants
-router.post("/", async (req, res) => {
+router.post("/", requireAdmin, async (req, res) => {
   try {
     const { name, category_id, variants } = req.body;
 
@@ -79,7 +80,7 @@ router.post("/", async (req, res) => {
 });
 
 // PUT update a product
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireAdmin, async (req, res) => {
   try {
     await Product.update(req.body, { where: { id: req.params.id } });
     res.json({ message: "Product updated" });
@@ -89,7 +90,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // PUT update a variant
-router.put("/variant/:id", async (req, res) => {
+router.put("/variant/:id", requireAdmin, async (req, res) => {
   try {
     await ProductVariant.update(req.body, { where: { id: req.params.id } });
     res.json({ message: "Variant updated" });
@@ -99,7 +100,7 @@ router.put("/variant/:id", async (req, res) => {
 });
 
 // DELETE (soft delete) a product
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireAdmin, async (req, res) => {
   try {
     await Product.update(
       { is_active: false },
@@ -112,7 +113,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // DELETE a variant
-router.delete("/variant/:id", async (req, res) => {
+router.delete("/variant/:id", requireAdmin, async (req, res) => {
   try {
     await ProductVariant.update(
       { is_active: false },
@@ -125,7 +126,7 @@ router.delete("/variant/:id", async (req, res) => {
 });
 
 // POST add a variant to existing product
-router.post("/variant", async (req, res) => {
+router.post("/variant", requireAdmin, async (req, res) => {
   try {
     const variant = await ProductVariant.create(req.body);
     res.json(variant);

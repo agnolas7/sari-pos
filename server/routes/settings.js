@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const StoreSettings = require("../models/StoreSettings");
+const requireAdmin = require("../middleware/requireAdmin");
 
 // GET /api/settings/:key
 router.get("/:key", async (req, res) => {
@@ -15,7 +16,7 @@ router.get("/:key", async (req, res) => {
 });
 
 // PUT /api/settings/:key
-router.put("/:key", async (req, res) => {
+router.put("/:key", requireAdmin, async (req, res) => {
   try {
     const { value } = req.body;
     const [setting, created] = await StoreSettings.findOrCreate({

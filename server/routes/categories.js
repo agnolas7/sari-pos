@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Category } = require("../models");
+const requireAdmin = require("../middleware/requireAdmin");
 
 // GET all categories
 router.get("/", async (req, res) => {
@@ -15,7 +16,7 @@ router.get("/", async (req, res) => {
 });
 
 // POST create a new category
-router.post("/", async (req, res) => {
+router.post("/", requireAdmin, async (req, res) => {
   try {
     const category = await Category.create(req.body);
     res.json(category);
@@ -25,7 +26,7 @@ router.post("/", async (req, res) => {
 });
 
 // PUT update a category
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireAdmin, async (req, res) => {
   try {
     await Category.update(req.body, { where: { id: req.params.id } });
     res.json({ message: "Category updated" });
@@ -35,7 +36,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE a category
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireAdmin, async (req, res) => {
   try {
     await Category.destroy({ where: { id: req.params.id } });
     res.json({ message: "Category deleted" });
