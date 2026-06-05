@@ -118,7 +118,7 @@ function UtangPage() {
         {/* Summary Card */}
         <div
           style={{
-            background: "linear-gradient(135deg, #f97316 0%, #ea580c 100%)",
+            background: "linear-gradient(135deg, #505081 0%, #3d3c5f 100%)",
             borderRadius: 12,
             padding: windowWidth < 640 ? 16 : 24,
             marginBottom: 24,
@@ -468,7 +468,7 @@ function UtangPage() {
                           background: isPaid
                             ? "#22c55e"
                             : percentage > 50
-                              ? "#f97316"
+                              ? "#505081"
                               : "#ef4444",
                           height: "100%",
                           width: `${Math.min(percentage, 100)}%`,
@@ -581,7 +581,7 @@ function UtangPage() {
                         fontSize: 13,
                         color: "#78350f",
                         marginBottom: 16,
-                        borderLeft: "3px solid #f97316",
+                        borderLeft: "3px solid #505081",
                       }}
                     >
                       <div style={{ fontWeight: 600, marginBottom: 4 }}>

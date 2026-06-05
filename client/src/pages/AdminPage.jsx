@@ -53,6 +53,11 @@ function AdminPage() {
   // Search products
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Store note
+  const [storeNote, setStoreNote] = useState(
+    localStorage.getItem("store_note") || "",
+  );
+
   // Selected products for bulk delete
   const [selectedProducts, setSelectedProducts] = useState(new Set());
 
@@ -261,7 +266,7 @@ function AdminPage() {
           style={{
             width: "100%",
             padding: 12,
-            background: "#f97316",
+            background: "#505081",
             color: "white",
             border: "none",
             borderRadius: 8,
@@ -313,6 +318,55 @@ function AdminPage() {
             }}
           >
             Logout
+          </button>
+        </div>
+
+        {/* Store Note Editor */}
+        <div
+          style={{
+            background: "white",
+            borderRadius: 12,
+            padding: 16,
+            marginBottom: 16,
+            border: "1px solid #e5e7eb",
+          }}
+        >
+          <h2 style={{ fontWeight: 700, marginBottom: 12 }}>
+            📢 Store Announcement
+          </h2>
+          <textarea
+            placeholder="Add a note for customers (e.g., lahat ng malaking chichirya 30, lahat ng maliit 10, lahat ng tinapay 10)"
+            value={storeNote}
+            onChange={(e) => setStoreNote(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "12px",
+              borderRadius: 8,
+              border: "1px solid #ddd",
+              fontSize: 14,
+              minHeight: 80,
+              fontFamily: "inherit",
+              marginBottom: 8,
+            }}
+          />
+          <button
+            onClick={() => {
+              localStorage.setItem("store_note", storeNote);
+              alert("✅ Announcement saved!");
+            }}
+            style={{
+              width: "100%",
+              padding: 10,
+              background: "#22c55e",
+              color: "white",
+              border: "none",
+              borderRadius: 8,
+              fontWeight: 600,
+              fontSize: 14,
+              cursor: "pointer",
+            }}
+          >
+            💾 Save Announcement
           </button>
         </div>
 
@@ -448,7 +502,7 @@ function AdminPage() {
             style={{
               width: "100%",
               padding: 12,
-              background: "#f97316",
+              background: "#505081",
               color: "white",
               border: "none",
               borderRadius: 8,
@@ -525,7 +579,7 @@ function AdminPage() {
             style={{
               width: "100%",
               padding: 10,
-              background: "#f97316",
+              background: "#505081",
               color: "white",
               border: "none",
               borderRadius: 8,
@@ -807,7 +861,7 @@ function AdminPage() {
                   <div style={{ fontSize: 13, color: "#888" }}>
                     {p.category?.name}
                   </div>
-                  <div style={{ fontSize: 13, color: "#f97316", marginTop: 2 }}>
+                  <div style={{ fontSize: 13, color: "#505081", marginTop: 2 }}>
                     {p.variants
                       ?.map(
                         (v) =>

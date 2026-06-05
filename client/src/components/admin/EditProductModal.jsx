@@ -163,7 +163,7 @@ function EditProductModal({ product, categories, onClose, onSave }) {
           style={{
             width: "100%",
             padding: 10,
-            background: "#f97316",
+            background: "#505081",
             color: "white",
             border: "none",
             borderRadius: 8,

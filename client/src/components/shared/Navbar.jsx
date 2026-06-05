@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import storeLogo from "../../assets/storelogo.png";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -9,64 +10,62 @@ function Navbar() {
   return (
     <nav
       style={{
-        background: "#f97316",
+        background: "linear-gradient(135deg, #505081 0%, #3d3c5f 100%)",
         color: "white",
-        padding: "12px 16px",
+        padding: "10px 24px",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 16,
-        borderRadius: 8,
+        marginBottom: 0,
+        boxShadow: "0 4px 20px rgba(80, 80, 129, 0.3)",
       }}
     >
-      <div style={{ fontSize: 18, fontWeight: 700 }}>🏪 Sari-POS</div>
+      <div
+        onClick={() => navigate("/")}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          cursor: "pointer",
+          transition: "transform 0.2s",
+        }}
+        onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+        onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      >
+        <img
+          src={storeLogo}
+          alt="Sari-POS Logo"
+          style={{
+            height: 42,
+            width: "auto",
+            borderRadius: 8,
+          }}
+        />
+        <span
+          style={{ fontSize: 20, fontWeight: 800, letterSpacing: "-0.5px" }}
+        >
+          Sari-POS
+        </span>
+      </div>
 
-      <div style={{ display: "flex", gap: 16 }}>
+      <div style={{ display: "flex", gap: 8 }}>
         <button
           onClick={() => navigate("/")}
-          style={{
-            background: isActive("/") ? "rgba(255,255,255,0.3)" : "transparent",
-            color: "white",
-            border: "none",
-            padding: "8px 14px",
-            borderRadius: 6,
-            cursor: "pointer",
-            fontWeight: isActive("/") ? 600 : 400,
-          }}
+          className={`boton-elegante${isActive("/") ? " active" : ""}`}
         >
           🛒 Store
         </button>
 
         <button
           onClick={() => navigate("/utang")}
-          style={{
-            background: isActive("/utang")
-              ? "rgba(255,255,255,0.3)"
-              : "transparent",
-            color: "white",
-            border: "none",
-            padding: "8px 14px",
-            borderRadius: 6,
-            cursor: "pointer",
-            fontWeight: isActive("/utang") ? 600 : 400,
-          }}
+          className={`boton-elegante${isActive("/utang") ? " active" : ""}`}
         >
           📋 Utang List
         </button>
 
         <button
           onClick={() => navigate("/admin")}
-          style={{
-            background: isActive("/admin")
-              ? "rgba(255,255,255,0.3)"
-              : "transparent",
-            color: "white",
-            border: "none",
-            padding: "8px 14px",
-            borderRadius: 6,
-            cursor: "pointer",
-            fontWeight: isActive("/admin") ? 600 : 400,
-          }}
+          className={`boton-elegante${isActive("/admin") ? " active" : ""}`}
         >
           ⚙️ Admin
         </button>

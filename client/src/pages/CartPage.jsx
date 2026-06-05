@@ -151,7 +151,7 @@ function CartPage() {
                 </button>
               </div>
 
-              <div style={{ fontWeight: 700, color: "#f97316", fontSize: 18 }}>
+              <div style={{ fontWeight: 700, color: "#505081", fontSize: 18 }}>
                 ₱{(item.price * item.quantity).toFixed(2)}
               </div>
             </div>
@@ -177,7 +177,7 @@ function CartPage() {
               }}
             >
               <span style={{ fontWeight: 600, fontSize: 18 }}>Total</span>
-              <span style={{ fontWeight: 700, fontSize: 22, color: "#f97316" }}>
+              <span style={{ fontWeight: 700, fontSize: 22, color: "#505081" }}>
                 ₱{total.toFixed(2)}
               </span>
             </div>
