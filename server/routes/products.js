@@ -49,11 +49,13 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { name, category_id, variants } = req.body;
-    
+
     if (!name || !category_id) {
-      return res.status(400).json({ error: "Product name and category_id are required" });
+      return res
+        .status(400)
+        .json({ error: "Product name and category_id are required" });
     }
-    
+
     const product = await Product.create({ name, category_id });
     if (variants && variants.length > 0) {
       const variantsWithId = variants.map((v) => ({

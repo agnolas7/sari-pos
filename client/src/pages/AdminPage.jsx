@@ -679,7 +679,14 @@ function AdminPage() {
             border: "1px solid #e5e7eb",
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 12,
+            }}
+          >
             <h2 style={{ fontWeight: 700, margin: 0 }}>
               Products (
               {
@@ -727,7 +734,9 @@ function AdminPage() {
             }}
           />
 
-          <div style={{ display: "flex", alignItems: "center", marginBottom: 12 }}>
+          <div
+            style={{ display: "flex", alignItems: "center", marginBottom: 12 }}
+          >
             <input
               type="checkbox"
               checked={
@@ -735,7 +744,9 @@ function AdminPage() {
                 selectedProducts.size ===
                   products.filter(
                     (p) =>
-                      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      p.name
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
                       p.category?.name
                         .toLowerCase()
                         .includes(searchQuery.toLowerCase()),
@@ -773,7 +784,9 @@ function AdminPage() {
                   alignItems: "center",
                   padding: "10px 0",
                   borderBottom: "1px solid #f3f4f6",
-                  background: selectedProducts.has(p.id) ? "#fef3c7" : "transparent",
+                  background: selectedProducts.has(p.id)
+                    ? "#fef3c7"
+                    : "transparent",
                   paddingLeft: 8,
                   borderRadius: 4,
                 }}

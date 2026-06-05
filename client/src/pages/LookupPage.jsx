@@ -199,8 +199,6 @@ function LookupPage() {
             onClose={() => setSelectedProduct(null)}
           />
         )}
-
-
       </div>
     </div>
   );
