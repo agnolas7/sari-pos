@@ -8,6 +8,7 @@ function CartPage() {
   const { items, removeItem, updateQuantity, clearCart, getTotal } =
     useCartStore();
   const [amountPaid, setAmountPaid] = useState("");
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1000,
   );
@@ -225,10 +226,7 @@ function CartPage() {
 
             {/* Clear cart */}
             <button
-              onClick={() => {
-                clearCart();
-                setAmountPaid("");
-              }}
+              onClick={() => setShowClearConfirm(true)}
               style={{
                 width: "100%",
                 marginTop: 12,
@@ -239,6 +237,7 @@ function CartPage() {
                 borderRadius: 8,
                 fontWeight: 600,
                 fontSize: 16,
+                cursor: "pointer",
               }}
             >
               Clear Cart
@@ -246,6 +245,91 @@ function CartPage() {
           </div>
         )}
       </div>
+
+      {/* Clear Cart Confirmation Modal */}
+      {showClearConfirm && (
+        <div
+          onClick={() => setShowClearConfirm(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,14,71,0.45)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 200,
+            padding: 16,
+            backdropFilter: "blur(4px)",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "white",
+              borderRadius: 20,
+              width: "100%",
+              maxWidth: 360,
+              padding: "28px 24px 24px",
+              boxShadow: "0 24px 64px rgba(15,14,71,0.25)",
+              textAlign: "center",
+            }}
+          >
+            <div style={{ fontSize: 40, marginBottom: 12 }}>🗑️</div>
+            <h2
+              style={{
+                fontSize: 18,
+                fontWeight: 800,
+                color: "#1e1b4b",
+                margin: "0 0 8px",
+              }}
+            >
+              Clear cart?
+            </h2>
+            <p style={{ fontSize: 14, color: "#6b7280", margin: "0 0 24px" }}>
+              All {items.length} item{items.length !== 1 ? "s" : ""} will be
+              removed.
+            </p>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button
+                onClick={() => setShowClearConfirm(false)}
+                style={{
+                  flex: 1,
+                  padding: "11px",
+                  borderRadius: 10,
+                  border: "1.5px solid #d1cee8",
+                  background: "white",
+                  color: "#505081",
+                  fontWeight: 700,
+                  fontSize: 14,
+                  cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  clearCart();
+                  setAmountPaid("");
+                  setShowClearConfirm(false);
+                }}
+                style={{
+                  flex: 1,
+                  padding: "11px",
+                  borderRadius: 10,
+                  border: "none",
+                  background: "#ef4444",
+                  color: "white",
+                  fontWeight: 700,
+                  fontSize: 14,
+                  cursor: "pointer",
+                }}
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

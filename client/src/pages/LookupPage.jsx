@@ -19,6 +19,19 @@ function LookupPage() {
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const { items, addItem } = useCartStore();
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 12;
+  const [toast, setToast] = useState(null);
+  const [cartBounce, setCartBounce] = useState(false);
+  const toastTimerRef = useRef(null);
+
+  const showToast = (name) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast(name);
+    toastTimerRef.current = setTimeout(() => setToast(null), 2200);
+    setCartBounce(true);
+    setTimeout(() => setCartBounce(false), 400);
+  };
 
   useEffect(() => {
     getCategories().then((res) => setCategories(res.data));
@@ -39,6 +52,17 @@ function LookupPage() {
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginated = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
+
+  // Reset to page 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedCategory]);
 
   const isMobile = windowWidth < 640;
   const cols = isMobile
@@ -128,7 +152,7 @@ function LookupPage() {
                 whiteSpace: "nowrap",
               }}
             >
-              📢 Announcements
+              📢 Price Guide
             </button>
           )}
           <button
@@ -176,6 +200,7 @@ function LookupPage() {
               onClick={() => {
                 setSearch("");
                 setSelectedCategory(null);
+                setCurrentPage(1);
               }}
               style={{
                 background: "none",
@@ -214,13 +239,113 @@ function LookupPage() {
               gap: isMobile ? 10 : 16,
             }}
           >
-            {filtered.map((product) => (
+            {paginated.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
                 onClick={() => setSelectedProduct(product)}
               />
             ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 6,
+              marginTop: 32,
+              flexWrap: "wrap",
+            }}
+          >
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              style={{
+                padding: "8px 16px",
+                borderRadius: 10,
+                border: "1.5px solid #d1cee8",
+                background: currentPage === 1 ? "#f5f4fc" : "white",
+                color: currentPage === 1 ? "#b0aed0" : "#505081",
+                fontWeight: 700,
+                fontSize: 13,
+                cursor: currentPage === 1 ? "default" : "pointer",
+                transition: "all 0.18s",
+              }}
+            >
+              ← Prev
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter(
+                (page) =>
+                  page === 1 ||
+                  page === totalPages ||
+                  Math.abs(page - currentPage) <= 1,
+              )
+              .reduce((acc, page, idx, arr) => {
+                if (idx > 0 && page - arr[idx - 1] > 1) {
+                  acc.push("...");
+                }
+                acc.push(page);
+                return acc;
+              }, [])
+              .map((item, idx) =>
+                item === "..." ? (
+                  <span
+                    key={`ellipsis-${idx}`}
+                    style={{ color: "#a09ec0", fontSize: 13, padding: "0 2px" }}
+                  >
+                    …
+                  </span>
+                ) : (
+                  <button
+                    key={item}
+                    onClick={() => setCurrentPage(item)}
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 10,
+                      border:
+                        currentPage === item
+                          ? "1.5px solid #505081"
+                          : "1.5px solid #d1cee8",
+                      background:
+                        currentPage === item
+                          ? "linear-gradient(135deg, #505081 0%, #272757 100%)"
+                          : "white",
+                      color: currentPage === item ? "white" : "#505081",
+                      fontWeight: 700,
+                      fontSize: 13,
+                      cursor: "pointer",
+                      transition: "all 0.18s",
+                    }}
+                  >
+                    {item}
+                  </button>
+                ),
+              )}
+
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              style={{
+                padding: "8px 16px",
+                borderRadius: 10,
+                border: "1.5px solid #d1cee8",
+                background: currentPage === totalPages ? "#f5f4fc" : "white",
+                color: currentPage === totalPages ? "#b0aed0" : "#505081",
+                fontWeight: 700,
+                fontSize: 13,
+                cursor: currentPage === totalPages ? "default" : "pointer",
+                transition: "all 0.18s",
+              }}
+            >
+              Next →
+            </button>
           </div>
         )}
       </div>
@@ -246,6 +371,9 @@ function LookupPage() {
           gap: 8,
           zIndex: 50,
           transition: "transform 0.2s, box-shadow 0.2s",
+          animation: cartBounce
+            ? "cartBump 0.38s cubic-bezier(0.34,1.56,0.64,1)"
+            : "none",
         }}
         onMouseOver={(e) => {
           e.currentTarget.style.transform = "translateY(-3px) scale(1.03)";
@@ -287,94 +415,272 @@ function LookupPage() {
           product={selectedProduct}
           onAdd={(variant) => {
             addItem(variant, selectedProduct.name);
+            showToast(selectedProduct.name);
             setSelectedProduct(null);
           }}
           onClose={() => setSelectedProduct(null)}
         />
       )}
 
+      {/* Add-to-cart Toast */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: 90,
+          right: 20,
+          zIndex: 60,
+          pointerEvents: "none",
+          transition:
+            "opacity 0.3s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1)",
+          opacity: toast ? 1 : 0,
+          transform: toast
+            ? "translateY(0) scale(1)"
+            : "translateY(12px) scale(0.95)",
+        }}
+      >
+        <div
+          style={{
+            background: "linear-gradient(135deg, #2e2d5a 0%, #1a1940 100%)",
+            color: "white",
+            borderRadius: 14,
+            padding: "10px 16px",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            boxShadow:
+              "0 8px 32px rgba(8,7,40,0.40), 0 0 0 1px rgba(255,255,255,0.08)",
+            maxWidth: 220,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+          }}
+        >
+          <span style={{ fontSize: 18, flexShrink: 0 }}>✅</span>
+          <div style={{ overflow: "hidden" }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: "rgba(255,255,255,0.55)",
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
+                marginBottom: 1,
+              }}
+            >
+              Added to cart
+            </div>
+            <div
+              style={{
+                fontSize: 13,
+                fontWeight: 700,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {toast}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes cartBump {
+          0%   { transform: scale(1); }
+          40%  { transform: scale(1.22); }
+          70%  { transform: scale(0.93); }
+          100% { transform: scale(1); }
+        }
+      `}</style>
+
       {/* Announcement Modal */}
       {showAnnouncement && (
         <InfoModal
-          title="📢 Price Guide"
+          title="Price Guide"
+          emoji="📢"
+          accent="#3b3278"
+          accentEnd="#1e1b4b"
           onClose={() => setShowAnnouncement(false)}
         >
-          <p
+          <div
             style={{
-              whiteSpace: "pre-wrap",
-              lineHeight: 2,
-              fontSize: 15,
-              color: "#1e1b4b",
+              background: "linear-gradient(135deg, #edeaff 0%, #f5f3ff 100%)",
+              borderRadius: 16,
+              padding: "18px 20px",
+              border: "1.5px solid #ddd8f8",
+              marginBottom: 4,
             }}
           >
-            {storeNote}
-          </p>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 14,
+              }}
+            >
+              <div
+                style={{
+                  width: 4,
+                  height: 18,
+                  borderRadius: 4,
+                  background: "linear-gradient(#7c6fcf, #505081)",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: "#7c6fcf",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Current Prices
+              </span>
+            </div>
+            <p
+              style={{
+                whiteSpace: "pre-wrap",
+                lineHeight: 2.1,
+                fontSize: 15,
+                color: "#1e1b4b",
+                margin: 0,
+                fontFamily: "inherit",
+              }}
+            >
+              {storeNote}
+            </p>
+          </div>
         </InfoModal>
       )}
 
       {/* Help Modal */}
       {showHelp && (
-        <InfoModal title="❓ How to Use" onClose={() => setShowHelp(false)}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        <InfoModal
+          title="How to Use"
+          emoji="❓"
+          onClose={() => setShowHelp(false)}
+        >
+          {/* Intro pill */}
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              background: "#ede9fe",
+              color: "#5b4f9c",
+              fontSize: 12,
+              fontWeight: 700,
+              padding: "5px 12px",
+              borderRadius: 20,
+              marginBottom: 20,
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+            }}
+          >
+            ✦ 5 quick steps
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column" }}>
             {[
               {
                 icon: "🔍",
                 step: "Search a product",
-                desc: "Type the product name or brand in the search bar. If one doesn't work, try the other (e.g. search 'Lucky Me' instead of 'Pancit Canton').",
+                desc: "Type the product name or brand in the search bar. If one doesn't work, try the other (e.g. 'Lucky Me' instead of 'Pancit Canton').",
+                color: "#6d5fbc",
               },
               {
                 icon: "🗂️",
                 step: "Filter by category",
                 desc: "Use the dropdown to narrow down by type — Snacks, Beverages, Bread, etc.",
+                color: "#4d7fcc",
               },
               {
                 icon: "👆",
                 step: "Tap a product card",
                 desc: "Tap any card to see its available sizes, flavors, and prices.",
+                color: "#3a9e7c",
               },
               {
                 icon: "🛒",
                 step: "Add to cart",
-                desc: "Pick a variant to add it to your cart. The floating cart button (bottom-right) shows how many items you have.",
+                desc: "Pick a variant to add it to your cart. The floating cart button (bottom-right) shows your item count.",
+                color: "#c07a2e",
               },
               {
                 icon: "🧮",
                 step: "Calculate your change",
-                desc: "Open the cart and enter the customer's cash amount — it will automatically show the exact change. The cart is your calculator, there's no checkout button.",
+                desc: "Open the cart and enter the cash amount — it instantly shows the exact change. The cart is your calculator.",
+                color: "#b04a7a",
               },
-            ].map(({ icon, step, desc }) => (
-              <div
-                key={step}
-                style={{ display: "flex", gap: 14, alignItems: "flex-start" }}
-              >
-                <span
+            ].map(({ icon, step, desc, color }, index, arr) => (
+              <div key={step} style={{ display: "flex", gap: 0 }}>
+                {/* Timeline column */}
+                <div
                   style={{
-                    fontSize: 22,
-                    width: 44,
-                    height: 44,
-                    background: "#ede9fe",
-                    borderRadius: 12,
                     display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
-                    justifyContent: "center",
                     flexShrink: 0,
+                    width: 52,
                   }}
                 >
-                  {icon}
-                </span>
-                <div>
                   <div
                     style={{
-                      fontWeight: 700,
+                      width: 44,
+                      height: 44,
+                      borderRadius: 14,
+                      background: `linear-gradient(135deg, ${color}22 0%, ${color}11 100%)`,
+                      border: `2px solid ${color}44`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 20,
+                      flexShrink: 0,
+                      boxShadow: `0 4px 14px ${color}22`,
+                    }}
+                  >
+                    {icon}
+                  </div>
+                  {index < arr.length - 1 && (
+                    <div
+                      style={{
+                        width: 2,
+                        flex: 1,
+                        minHeight: 16,
+                        margin: "5px 0",
+                        background: `linear-gradient(${color}55, ${arr[index + 1].color}33)`,
+                        borderRadius: 2,
+                      }}
+                    />
+                  )}
+                </div>
+
+                {/* Content column */}
+                <div
+                  style={{
+                    flex: 1,
+                    paddingLeft: 14,
+                    paddingBottom: index < arr.length - 1 ? 22 : 0,
+                    paddingTop: 2,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontWeight: 800,
                       fontSize: 14,
                       color: "#1e1b4b",
-                      marginBottom: 3,
+                      marginBottom: 5,
+                      letterSpacing: "-0.01em",
                     }}
                   >
                     {step}
                   </div>
                   <div
-                    style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.65 }}
+                    style={{
+                      fontSize: 13,
+                      color: "#6b7280",
+                      lineHeight: 1.7,
+                    }}
                   >
                     {desc}
                   </div>
@@ -676,8 +982,14 @@ function CategoryDropdown({ categories, selected, onChange, isMobile }) {
   );
 }
 
-function InfoModal({ title, onClose, children }) {
-  // Close on backdrop click or Escape key
+function InfoModal({
+  title,
+  emoji,
+  accent = "#505081",
+  accentEnd = "#272757",
+  onClose,
+  children,
+}) {
   useEffect(() => {
     const handler = (e) => {
       if (e.key === "Escape") onClose();
@@ -692,76 +1004,158 @@ function InfoModal({ title, onClose, children }) {
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(15,14,71,0.55)",
+        background: "rgba(8,7,40,0.70)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         zIndex: 200,
         padding: 16,
-        backdropFilter: "blur(4px)",
+        backdropFilter: "blur(10px)",
+        WebkitBackdropFilter: "blur(10px)",
+        animation: "fadeIn 0.18s ease",
       }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: "white",
-          borderRadius: 20,
           width: "100%",
-          maxWidth: 480,
-          maxHeight: "80vh",
+          maxWidth: 500,
+          maxHeight: "88vh",
           display: "flex",
           flexDirection: "column",
-          boxShadow: "0 24px 64px rgba(15,14,71,0.35)",
-          animation: "dropdownSlide 0.22s cubic-bezier(0.4,0,0.2,1)",
+          borderRadius: 28,
+          overflow: "hidden",
+          boxShadow:
+            "0 40px 100px rgba(8,7,40,0.55), 0 0 0 1px rgba(255,255,255,0.06)",
+          animation: "modalPop 0.25s cubic-bezier(0.34,1.56,0.64,1)",
         }}
       >
-        {/* Header */}
+        {/* Gradient Header */}
         <div
           style={{
+            background: `linear-gradient(135deg, ${accent} 0%, ${accentEnd} 100%)`,
+            padding: "24px 24px 20px",
             display: "flex",
-            justifyContent: "space-between",
             alignItems: "center",
-            padding: "18px 20px 14px",
-            borderBottom: "1px solid #f0eefb",
+            justifyContent: "space-between",
             flexShrink: 0,
+            position: "relative",
+            overflow: "hidden",
           }}
         >
-          <h2
+          {/* Decorative circles */}
+          <div
             style={{
-              fontSize: 17,
-              fontWeight: 800,
-              color: "#1e1b4b",
-              margin: 0,
+              position: "absolute",
+              top: -20,
+              right: 60,
+              width: 80,
+              height: 80,
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.06)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: -30,
+              right: 10,
+              width: 110,
+              height: 110,
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.05)",
+            }}
+          />
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 14,
+              position: "relative",
             }}
           >
-            {title}
-          </h2>
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 14,
+                background: "rgba(255,255,255,0.18)",
+                border: "1.5px solid rgba(255,255,255,0.25)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 22,
+                flexShrink: 0,
+                backdropFilter: "blur(4px)",
+              }}
+            >
+              {emoji}
+            </div>
+            <h2
+              style={{
+                fontSize: 19,
+                fontWeight: 800,
+                color: "white",
+                margin: 0,
+                letterSpacing: "-0.01em",
+                textShadow: "0 1px 4px rgba(0,0,0,0.2)",
+              }}
+            >
+              {title}
+            </h2>
+          </div>
+
           <button
             onClick={onClose}
             style={{
-              background: "#f0eefb",
-              border: "none",
-              width: 32,
-              height: 32,
+              background: "rgba(255,255,255,0.15)",
+              border: "1.5px solid rgba(255,255,255,0.20)",
+              width: 36,
+              height: 36,
               borderRadius: "50%",
-              fontSize: 14,
+              fontSize: 13,
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#505081",
+              color: "rgba(255,255,255,0.9)",
               fontWeight: 700,
+              flexShrink: 0,
+              position: "relative",
+              transition: "background 0.2s",
             }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background = "rgba(255,255,255,0.28)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = "rgba(255,255,255,0.15)")
+            }
           >
             ✕
           </button>
         </div>
 
         {/* Body */}
-        <div style={{ overflowY: "auto", padding: "18px 20px 24px" }}>
+        <div
+          style={{
+            overflowY: "auto",
+            padding: "24px",
+            background: "#f7f6fd",
+            flex: 1,
+          }}
+        >
           {children}
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes modalPop {
+          from { opacity: 0; transform: scale(0.92) translateY(16px); }
+          to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
