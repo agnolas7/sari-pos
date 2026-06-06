@@ -6,6 +6,8 @@ import VariantPicker from "../components/pos/VariantPicker";
 import Navbar from "../components/shared/Navbar";
 
 function LookupPage() {
+  const [helpTab, setHelpTab] = useState("howto");
+
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -572,7 +574,7 @@ function LookupPage() {
               fontWeight: 700,
               padding: "5px 12px",
               borderRadius: 20,
-              marginBottom: 20,
+              marginBottom: 16,
               letterSpacing: "0.05em",
               textTransform: "uppercase",
             }}
@@ -580,138 +582,290 @@ function LookupPage() {
             ✦ Gabay sa paggamit
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {[
-              {
-                icon: "🔍",
-                step: "Maghanap ng produkto",
-                desc: "I-type ang pangalan ng produkto o brand sa search bar. Kung hindi lumabas, subukan ang ibang pangalan (hal. 'Lucky Me' imbes na 'Pancit Canton').",
-                color: "#6d5fbc",
-              },
-              {
-                icon: "🗂️",
-                step: "I-filter sa category",
-                desc: "Gamitin ang dropdown para mas madaling hanapin — Snacks, Beverages, Bread, at iba pa.",
-                color: "#4d7fcc",
-              },
-              {
-                icon: "👆",
-                step: "I-tap ang produkto",
-                desc: "I-tap ang kahit anong card para makita ang available na sizes, flavors, at presyo nito.",
-                color: "#3a9e7c",
-              },
-              {
-                icon: "🛒",
-                step: "Idagdag sa cart",
-                desc: "Pumili ng variant para idagdag sa cart. Makikita ang bilang ng items sa floating cart button sa kanan-baba ng screen.",
-                color: "#c07a2e",
-              },
-              {
-                icon: "🧮",
-                step: "Kalkulahin ang sukli",
-                desc: "Buksan ang cart at i-type ang ibinayad — agad na lalabas ang sukli. Gamitin ito bilang calculator.",
-                color: "#b04a7a",
-              },
-              {
-                icon: "💾",
-                step: "I-save ang benta",
-                desc: "I-tap ang 'Save as [Pangalan]'s Sale' para i-record ang transaksyon. May lalabas na confirmation na may buod ng order — i-confirm para ma-save at awtomatikong macle-clear ang cart para sa susunod na customer.",
-                color: "#0e7490",
-              },
-              {
-                icon: "📋",
-                step: "Utang List",
-                desc: "Dito mo itatala ang mga utang ng customers — magdagdag ng bagong utang, mag-record ng bayad (partial o full), at mag-delete ng natapos nang bayaran.",
-                color: "#7c3aed",
-              },
-              {
-                icon: "📊",
-                step: "Sales History",
-                desc: "Makikita dito ang lahat ng transaksyon kasama ang petsa, oras, at kung sino ang nag-serve. I-tap ang isang row para makita ang mga produktong nabili. Puwede ring mag-filter sa petsa o gumamit ng Today / This Week / This Month.",
-                color: "#059669",
-              },
-              {
-                icon: "🏆",
-                step: "Top Sellers",
-                desc: "Leaderboard ng mga attendant base sa dami ng benta. Pwedeng palitan ng Today, This Week, This Month, o All Time para makita kung sino ang nangunguna.",
-                color: "#d97706",
-              },
-            ].map(({ icon, step, desc, color }, index, arr) => (
-              <div key={step} style={{ display: "flex", gap: 0 }}>
-                {/* Timeline column */}
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    flexShrink: 0,
-                    width: 52,
-                  }}
-                >
+          {/* Tabs */}
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              marginBottom: 16,
+              flexWrap: "wrap",
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setHelpTab("howto")}
+              style={{
+                padding: "8px 14px",
+                borderRadius: 999,
+                border: "1.5px solid #d1cee8",
+                background:
+                  helpTab === "howto"
+                    ? "linear-gradient(135deg, #505081 0%, #272757 100%)"
+                    : "white",
+                color: helpTab === "howto" ? "white" : "#505081",
+                fontWeight: 800,
+                fontSize: 13,
+                cursor: "pointer",
+              }}
+            >
+              ❓ Paano Gamitin
+            </button>
+            <button
+              type="button"
+              onClick={() => setHelpTab("install")}
+              style={{
+                padding: "8px 14px",
+                borderRadius: 999,
+                border: "1.5px solid #d1cee8",
+                background:
+                  helpTab === "install"
+                    ? "linear-gradient(135deg, #505081 0%, #272757 100%)"
+                    : "white",
+                color: helpTab === "install" ? "white" : "#505081",
+                fontWeight: 800,
+                fontSize: 13,
+                cursor: "pointer",
+              }}
+            >
+              📱 Gawing App
+            </button>
+          </div>
+
+          {helpTab === "howto" ? (
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {[
+                {
+                  icon: "🔍",
+                  step: "Maghanap ng produkto",
+                  desc: "I-type ang pangalan ng produkto o brand sa search bar. Kung hindi lumabas, subukan ang ibang pangalan (hal. 'Lucky Me' imbes na 'Pancit Canton').",
+                  color: "#6d5fbc",
+                },
+                {
+                  icon: "🗂️",
+                  step: "I-filter sa category",
+                  desc: "Gamitin ang dropdown para mas madaling hanapin — Snacks, Beverages, Bread, at iba pa.",
+                  color: "#4d7fcc",
+                },
+                {
+                  icon: "👆",
+                  step: "I-tap ang produkto",
+                  desc: "I-tap ang kahit anong card para makita ang available na sizes, flavors, at presyo nito.",
+                  color: "#3a9e7c",
+                },
+                {
+                  icon: "🛒",
+                  step: "Idagdag sa cart",
+                  desc: "Pumili ng variant para idagdag sa cart. Makikita ang bilang ng items sa floating cart button sa kanan-baba ng screen.",
+                  color: "#c07a2e",
+                },
+                {
+                  icon: "🧮",
+                  step: "Kalkulahin ang sukli",
+                  desc: "Buksan ang cart at i-type ang ibinayad — agad na lalabas ang sukli. Gamitin ito bilang calculator.",
+                  color: "#b04a7a",
+                },
+                {
+                  icon: "💾",
+                  step: "I-save ang benta",
+                  desc: "I-tap ang 'Save as [Pangalan]'s Sale' para i-record ang transaksyon. May lalabas na confirmation na may buod ng order — i-confirm para ma-save at awtomatikong macle-clear ang cart para sa susunod na customer.",
+                  color: "#0e7490",
+                },
+                {
+                  icon: "📋",
+                  step: "Utang List",
+                  desc: "Dito mo itatala ang mga utang ng customers — magdagdag ng bagong utang, mag-record ng bayad (partial o full), at mag-delete ng natapos nang bayaran.",
+                  color: "#7c3aed",
+                },
+                {
+                  icon: "📊",
+                  step: "Sales History",
+                  desc: "Makikita dito ang lahat ng transaksyon kasama ang petsa, oras, at kung sino ang nag-serve. I-tap ang isang row para makita ang mga produktong nabili. Puwede ring mag-filter sa petsa o gumamit ng Today / This Week / This Month.",
+                  color: "#059669",
+                },
+                {
+                  icon: "🏆",
+                  step: "Top Sellers",
+                  desc: "Leaderboard ng mga attendant base sa dami ng benta. Pwedeng palitan ng Today, This Week, This Month, o All Time para makita kung sino ang nangunguna.",
+                  color: "#d97706",
+                },
+              ].map(({ icon, step, desc, color }, index, arr) => (
+                <div key={step} style={{ display: "flex", gap: 0 }}>
+                  {/* Timeline column */}
                   <div
                     style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 14,
-                      background: `linear-gradient(135deg, ${color}22 0%, ${color}11 100%)`,
-                      border: `2px solid ${color}44`,
                       display: "flex",
+                      flexDirection: "column",
                       alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 20,
                       flexShrink: 0,
-                      boxShadow: `0 4px 14px ${color}22`,
+                      width: 52,
                     }}
                   >
-                    {icon}
-                  </div>
-                  {index < arr.length - 1 && (
                     <div
                       style={{
-                        width: 2,
-                        flex: 1,
-                        minHeight: 16,
-                        margin: "5px 0",
-                        background: `linear-gradient(${color}55, ${arr[index + 1].color}33)`,
-                        borderRadius: 2,
+                        width: 44,
+                        height: 44,
+                        borderRadius: 14,
+                        background: `linear-gradient(135deg, ${color}22 0%, ${color}11 100%)`,
+                        border: `2px solid ${color}44`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 20,
+                        flexShrink: 0,
+                        boxShadow: `0 4px 14px ${color}22`,
                       }}
-                    />
-                  )}
-                </div>
+                    >
+                      {icon}
+                    </div>
+                    {index < arr.length - 1 && (
+                      <div
+                        style={{
+                          width: 2,
+                          flex: 1,
+                          minHeight: 16,
+                          margin: "5px 0",
+                          background: `linear-gradient(${color}55, ${arr[index + 1].color}33)`,
+                          borderRadius: 2,
+                        }}
+                      />
+                    )}
+                  </div>
 
-                {/* Content column */}
+                  {/* Content column */}
+                  <div
+                    style={{
+                      flex: 1,
+                      paddingLeft: 14,
+                      paddingBottom: index < arr.length - 1 ? 22 : 0,
+                      paddingTop: 2,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontWeight: 800,
+                        fontSize: 14,
+                        color: "#1e1b4b",
+                        marginBottom: 5,
+                        letterSpacing: "-0.01em",
+                      }}
+                    >
+                      {step}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 13,
+                        color: "#6b7280",
+                        lineHeight: 1.7,
+                      }}
+                    >
+                      {desc}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <div
+                style={{
+                  background: "#ede9fe",
+                  border: "1.5px solid #ddd8f8",
+                  borderRadius: 16,
+                  padding: "14px 16px",
+                }}
+              >
                 <div
-                  style={{
-                    flex: 1,
-                    paddingLeft: 14,
-                    paddingBottom: index < arr.length - 1 ? 22 : 0,
-                    paddingTop: 2,
-                  }}
+                  style={{ fontWeight: 900, color: "#1e1b4b", marginBottom: 6 }}
                 >
-                  <div
-                    style={{
-                      fontWeight: 800,
-                      fontSize: 14,
-                      color: "#1e1b4b",
-                      marginBottom: 5,
-                      letterSpacing: "-0.01em",
-                    }}
-                  >
-                    {step}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 13,
-                      color: "#6b7280",
-                      lineHeight: 1.7,
-                    }}
-                  >
-                    {desc}
-                  </div>
+                  📌 I-install bilang App (Homescreen)
+                </div>
+                <div
+                  style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.7 }}
+                >
+                  Para mas madali gamitin tulad ng app, sundin ang instructions
+                  sa phone browser.
                 </div>
               </div>
-            ))}
-          </div>
+
+              <div
+                style={{
+                  background: "white",
+                  border: "1.5px solid #e9e7fb",
+                  borderRadius: 16,
+                  padding: "14px 16px",
+                }}
+              >
+                <div
+                  style={{ fontWeight: 900, color: "#1e1b4b", marginBottom: 8 }}
+                >
+                  🍎 iPhone (Safari)
+                </div>
+                <ol
+                  style={{
+                    margin: 0,
+                    paddingLeft: 18,
+                    fontSize: 13,
+                    color: "#6b7280",
+                    lineHeight: 1.75,
+                  }}
+                >
+                  <li>Buksan ang site sa Safari.</li>
+                  <li>
+                    I-tap ang <b>Share</b> button (↑ arrow sa ilalim/itaas ng
+                    screen depende sa model).
+                  </li>
+                  <li>
+                    Piliin ang <b>Add to Home Screen</b> (Magdagdag sa Home
+                    Screen).
+                  </li>
+                  <li>
+                    I-tap ang <b>Add</b> para lumabas ito sa home screen.
+                  </li>
+                </ol>
+              </div>
+
+              <div
+                style={{
+                  background: "white",
+                  border: "1.5px solid #e9e7fb",
+                  borderRadius: 16,
+                  padding: "14px 16px",
+                }}
+              >
+                <div
+                  style={{ fontWeight: 900, color: "#1e1b4b", marginBottom: 8 }}
+                >
+                  🤖 Android (Chrome)
+                </div>
+                <ol
+                  style={{
+                    margin: 0,
+                    paddingLeft: 18,
+                    fontSize: 13,
+                    color: "#6b7280",
+                    lineHeight: 1.75,
+                  }}
+                >
+                  <li>Buksan ang site sa Chrome.</li>
+                  <li>
+                    I-tap ang <b>⋮ (Menu)</b> sa kanang-itaas.
+                  </li>
+                  <li>
+                    Piliin ang <b>Add to Home screen</b> (Magdagdag sa Home
+                    screen).
+                  </li>
+                  <li>
+                    I-tap ang <b>Add</b> para magkaroon ng app icon.
+                  </li>
+                </ol>
+              </div>
+
+              <div style={{ fontSize: 12, color: "#9a98b5" }}>
+                Tip: Kapag na-install na, bumalik sa home screen at i-tap ang
+                icon para mabilis makapasok.
+              </div>
+            </div>
+          )}
         </InfoModal>
       )}
     </div>
