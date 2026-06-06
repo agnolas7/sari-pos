@@ -501,7 +501,14 @@ function CartPage() {
             }}
           >
             {/* Attendant badge */}
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                marginBottom: 20,
+              }}
+            >
               <div
                 style={{
                   width: 52,
@@ -519,10 +526,21 @@ function CartPage() {
                 {activeAttendant.emoji}
               </div>
               <div>
-                <div style={{ fontSize: 11, color: "#8886ac", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 2 }}>
+                <div
+                  style={{
+                    fontSize: 11,
+                    color: "#8886ac",
+                    fontWeight: 600,
+                    letterSpacing: "0.05em",
+                    textTransform: "uppercase",
+                    marginBottom: 2,
+                  }}
+                >
                   Saving sale for
                 </div>
-                <div style={{ fontSize: 18, fontWeight: 800, color: "#1e1b4b" }}>
+                <div
+                  style={{ fontSize: 18, fontWeight: 800, color: "#1e1b4b" }}
+                >
                   {activeAttendant.name}
                 </div>
               </div>
@@ -538,36 +556,114 @@ function CartPage() {
                 border: "1.5px solid #e5e3f0",
               }}
             >
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#8886ac", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 10 }}>
+              <div
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: "#8886ac",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                  marginBottom: 10,
+                }}
+              >
                 Order Summary
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 180, overflowY: "auto" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 6,
+                  maxHeight: 180,
+                  overflowY: "auto",
+                }}
+              >
                 {items.map((item) => (
-                  <div key={item.variantId} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                  <div
+                    key={item.variantId}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      gap: 8,
+                    }}
+                  >
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "#1e1b4b" }}>{item.productName}</span>
+                      <span
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 600,
+                          color: "#1e1b4b",
+                        }}
+                      >
+                        {item.productName}
+                      </span>
                       {(item.size || item.flavor) && (
-                        <span style={{ marginLeft: 5, fontSize: 11, color: "#8886ac" }}>
+                        <span
+                          style={{
+                            marginLeft: 5,
+                            fontSize: 11,
+                            color: "#8886ac",
+                          }}
+                        >
                           {[item.size, item.flavor].filter(Boolean).join(" / ")}
                         </span>
                       )}
                     </div>
-                    <div style={{ display: "flex", gap: 10, flexShrink: 0, alignItems: "center" }}>
-                      <span style={{ fontSize: 12, color: "#a09ec0" }}>×{item.quantity}</span>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: "#505081" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: 10,
+                        flexShrink: 0,
+                        alignItems: "center",
+                      }}
+                    >
+                      <span style={{ fontSize: 12, color: "#a09ec0" }}>
+                        ×{item.quantity}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 700,
+                          color: "#505081",
+                        }}
+                      >
                         ₱{(item.price * item.quantity).toFixed(2)}
                       </span>
                     </div>
                   </div>
                 ))}
               </div>
-              <div style={{ borderTop: "1.5px solid #e5e3f0", marginTop: 12, paddingTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 13, fontWeight: 700, color: "#1e1b4b" }}>Total</span>
-                <span style={{ fontSize: 18, fontWeight: 800, color: "#505081" }}>₱{total.toFixed(2)}</span>
+              <div
+                style={{
+                  borderTop: "1.5px solid #e5e3f0",
+                  marginTop: 12,
+                  paddingTop: 10,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <span
+                  style={{ fontSize: 13, fontWeight: 700, color: "#1e1b4b" }}
+                >
+                  Total
+                </span>
+                <span
+                  style={{ fontSize: 18, fontWeight: 800, color: "#505081" }}
+                >
+                  ₱{total.toFixed(2)}
+                </span>
               </div>
             </div>
 
-            <p style={{ fontSize: 13, color: "#8886ac", margin: "0 0 20px", textAlign: "center" }}>
+            <p
+              style={{
+                fontSize: 13,
+                color: "#8886ac",
+                margin: "0 0 20px",
+                textAlign: "center",
+              }}
+            >
               This will save the sale and clear the cart.
             </p>
 

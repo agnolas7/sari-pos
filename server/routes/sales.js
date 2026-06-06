@@ -20,7 +20,8 @@ router.post("/", async (req, res) => {
         sale_id: sale.id,
         variant_id: item.variantId ?? null,
         product_name: item.productName,
-        variant_label: [item.size, item.flavor].filter(Boolean).join(" / ") || null,
+        variant_label:
+          [item.size, item.flavor].filter(Boolean).join(" / ") || null,
         price: item.price,
         quantity: item.quantity,
       }));
@@ -125,7 +126,14 @@ router.get("/history", async (req, res) => {
         {
           model: SaleItem,
           as: "items",
-          attributes: ["id", "variant_id", "product_name", "variant_label", "price", "quantity"],
+          attributes: [
+            "id",
+            "variant_id",
+            "product_name",
+            "variant_label",
+            "price",
+            "quantity",
+          ],
         },
       ],
       order: [["createdAt", "DESC"]],

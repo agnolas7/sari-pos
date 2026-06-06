@@ -336,10 +336,23 @@ export default function SalesHistoryPage() {
                   minWidth: 120,
                 }}
               >
-                <div style={{ fontSize: 11, color: "#8886ac", fontWeight: 600, marginBottom: 2 }}>
+                <div
+                  style={{
+                    fontSize: 11,
+                    color: "#8886ac",
+                    fontWeight: 600,
+                    marginBottom: 2,
+                  }}
+                >
                   {icon} {label}
                 </div>
-                <div style={{ fontSize: isMobile ? 15 : 17, fontWeight: 800, color: "#1e1b4b" }}>
+                <div
+                  style={{
+                    fontSize: isMobile ? 15 : 17,
+                    fontWeight: 800,
+                    color: "#1e1b4b",
+                  }}
+                >
                   {value}
                 </div>
               </div>
@@ -391,11 +404,20 @@ export default function SalesHistoryPage() {
             }}
           >
             <div style={{ fontSize: 52, marginBottom: 14 }}>📊</div>
-            <p style={{ fontSize: 17, margin: 0, color: "#8886ac", fontWeight: 600 }}>
+            <p
+              style={{
+                fontSize: 17,
+                margin: 0,
+                color: "#8886ac",
+                fontWeight: 600,
+              }}
+            >
               No sales found.
             </p>
             <p style={{ fontSize: 13, color: "#bbb", marginTop: 6 }}>
-              {hasFilter ? "Try adjusting the date filter." : "No transactions recorded yet."}
+              {hasFilter
+                ? "Try adjusting the date filter."
+                : "No transactions recorded yet."}
             </p>
           </div>
         ) : isMobile ? (
@@ -406,7 +428,9 @@ export default function SalesHistoryPage() {
                 key={sale.id}
                 sale={sale}
                 expanded={expandedId === sale.id}
-                onToggle={() => setExpandedId(expandedId === sale.id ? null : sale.id)}
+                onToggle={() =>
+                  setExpandedId(expandedId === sale.id ? null : sale.id)
+                }
               />
             ))}
           </div>
@@ -431,11 +455,20 @@ export default function SalesHistoryPage() {
               <thead>
                 <tr
                   style={{
-                    background: "linear-gradient(135deg, #505081 0%, #3d3c5f 100%)",
+                    background:
+                      "linear-gradient(135deg, #505081 0%, #3d3c5f 100%)",
                     color: "white",
                   }}
                 >
-                  {["#", "Date", "Time", "Served By", "Items", "Amount", ""].map((h) => (
+                  {[
+                    "#",
+                    "Date",
+                    "Time",
+                    "Served By",
+                    "Items",
+                    "Amount",
+                    "",
+                  ].map((h) => (
                     <th
                       key={h}
                       style={{
@@ -463,7 +496,9 @@ export default function SalesHistoryPage() {
                     idx={(page - 1) * PAGE_SIZE + idx + 1}
                     isEven={idx % 2 === 0}
                     expanded={expandedId === sale.id}
-                    onToggle={() => setExpandedId(expandedId === sale.id ? null : sale.id)}
+                    onToggle={() =>
+                      setExpandedId(expandedId === sale.id ? null : sale.id)
+                    }
                   />
                 ))}
               </tbody>
@@ -502,8 +537,7 @@ export default function SalesHistoryPage() {
 
             {Array.from({ length: totalPages }, (_, i) => i + 1)
               .filter(
-                (p) =>
-                  p === 1 || p === totalPages || Math.abs(p - page) <= 1,
+                (p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1,
               )
               .reduce((acc, p, i, arr) => {
                 if (i > 0 && p - arr[i - 1] > 1) acc.push("...");
@@ -512,7 +546,10 @@ export default function SalesHistoryPage() {
               }, [])
               .map((item, idx) =>
                 item === "..." ? (
-                  <span key={`e-${idx}`} style={{ color: "#a09ec0", fontSize: 13 }}>
+                  <span
+                    key={`e-${idx}`}
+                    style={{ color: "#a09ec0", fontSize: 13 }}
+                  >
                     …
                   </span>
                 ) : (
@@ -524,7 +561,9 @@ export default function SalesHistoryPage() {
                       height: 36,
                       borderRadius: 10,
                       border:
-                        page === item ? "1.5px solid #505081" : "1.5px solid #d1cee8",
+                        page === item
+                          ? "1.5px solid #505081"
+                          : "1.5px solid #d1cee8",
                       background:
                         page === item
                           ? "linear-gradient(135deg, #505081 0%, #272757 100%)"
@@ -572,7 +611,14 @@ export default function SalesHistoryPage() {
 function ItemsBreakdown({ items }) {
   if (!items || items.length === 0) {
     return (
-      <div style={{ color: "#a09ec0", fontSize: 12, fontStyle: "italic", padding: "4px 0" }}>
+      <div
+        style={{
+          color: "#a09ec0",
+          fontSize: 12,
+          fontStyle: "italic",
+          padding: "4px 0",
+        }}
+      >
         No item details recorded for this transaction.
       </div>
     );
@@ -609,9 +655,26 @@ function ItemsBreakdown({ items }) {
               </span>
             )}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
-            <span style={{ fontSize: 12, color: "#8886ac" }}>×{item.quantity}</span>
-            <span style={{ fontWeight: 700, color: "#505081", fontSize: 13, minWidth: 64, textAlign: "right" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              flexShrink: 0,
+            }}
+          >
+            <span style={{ fontSize: 12, color: "#8886ac" }}>
+              ×{item.quantity}
+            </span>
+            <span
+              style={{
+                fontWeight: 700,
+                color: "#505081",
+                fontSize: 13,
+                minWidth: 64,
+                textAlign: "right",
+              }}
+            >
               ₱{(parseFloat(item.price) * item.quantity).toFixed(2)}
             </span>
           </div>
@@ -637,10 +700,10 @@ function SaleRow({ sale, idx, isEven, expanded, onToggle }) {
           background: expanded
             ? "rgba(80,80,129,0.06)"
             : hovered
-            ? "rgba(80,80,129,0.04)"
-            : isEven
-            ? "#faf9fe"
-            : "white",
+              ? "rgba(80,80,129,0.04)"
+              : isEven
+                ? "#faf9fe"
+                : "white",
           transition: "background 0.15s",
           borderBottom: expanded ? "none" : "1px solid #f0eefb",
           cursor: "pointer",
@@ -657,10 +720,23 @@ function SaleRow({ sale, idx, isEven, expanded, onToggle }) {
         >
           {idx}
         </td>
-        <td style={{ padding: "13px 18px", fontWeight: 600, color: "#1e1b4b", whiteSpace: "nowrap" }}>
+        <td
+          style={{
+            padding: "13px 18px",
+            fontWeight: 600,
+            color: "#1e1b4b",
+            whiteSpace: "nowrap",
+          }}
+        >
           {formatDate(sale.createdAt)}
         </td>
-        <td style={{ padding: "13px 18px", color: "#6b7280", whiteSpace: "nowrap" }}>
+        <td
+          style={{
+            padding: "13px 18px",
+            color: "#6b7280",
+            whiteSpace: "nowrap",
+          }}
+        >
           {formatTime(sale.createdAt)}
         </td>
         <td style={{ padding: "13px 18px" }}>
@@ -716,7 +792,12 @@ function SaleRow({ sale, idx, isEven, expanded, onToggle }) {
         </td>
       </tr>
       {expanded && (
-        <tr style={{ background: isEven ? "#f5f3fc" : "#f8f7fe", borderBottom: "1px solid #e5e3f0" }}>
+        <tr
+          style={{
+            background: isEven ? "#f5f3fc" : "#f8f7fe",
+            borderBottom: "1px solid #e5e3f0",
+          }}
+        >
           <td colSpan={7} style={{ padding: "0 18px 16px 64px" }}>
             <div
               style={{
@@ -796,7 +877,14 @@ function SaleCard({ sale, expanded, onToggle }) {
 
         {/* Middle info */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 700, fontSize: 14, color: "#1e1b4b", marginBottom: 2 }}>
+          <div
+            style={{
+              fontWeight: 700,
+              fontSize: 14,
+              color: "#1e1b4b",
+              marginBottom: 2,
+            }}
+          >
             {a?.name ?? "Unknown"}
           </div>
           <div style={{ fontSize: 12, color: "#8886ac" }}>
@@ -808,7 +896,14 @@ function SaleCard({ sale, expanded, onToggle }) {
         </div>
 
         {/* Amount + chevron */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            flexShrink: 0,
+          }}
+        >
           <div style={{ fontWeight: 800, fontSize: 16, color: "#505081" }}>
             ₱{parseFloat(sale.total).toFixed(2)}
           </div>
